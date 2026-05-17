@@ -1957,13 +1957,505 @@ file datei.xyz
       </div>
     </div>
   </div>
-  <div class="page" id="page-m6-linux"><span class="chapter-tag tag-perm">Modul 06</span><h1>Linux Berechtigungen</h1><p class="lead">Folgt im n&auml;chsten Update.</p></div>
-  <div class="page" id="page-m6-windows"><span class="chapter-tag tag-perm">Modul 06</span><h1>Windows ACL</h1><p class="lead">Folgt im n&auml;chsten Update.</p></div>
-  <div class="page" id="page-m6-quiz"><span class="chapter-tag tag-quiz">Quiz 6</span><h1>Quiz 6</h1><p class="lead">Folgt wenn Modul 6 fertig ist.</p></div>
-  <div class="page" id="page-m7-mime"><span class="chapter-tag tag-mime">Modul 07</span><h1>MIME-Types</h1><p class="lead">Folgt im n&auml;chsten Update.</p></div>
-  <div class="page" id="page-m7-base64"><span class="chapter-tag tag-mime">Modul 07</span><h1>Base64</h1><p class="lead">Folgt im n&auml;chsten Update.</p></div>
-  <div class="page" id="page-m7-quiz"><span class="chapter-tag tag-quiz">Quiz 7</span><h1>Quiz 7</h1><p class="lead">Folgt wenn Modul 7 fertig ist.</p></div>
-  <div class="page" id="page-final-quiz"><span class="chapter-tag tag-quiz">Abschluss</span><h1>Gesamtquiz</h1><p class="lead">Folgt wenn alle Module fertig sind.</p></div>
+  <!-- ══ MODUL 6: LINUX BERECHTIGUNGEN ══ -->
+  <div class="page" id="page-m6-linux">
+    <span class="chapter-tag tag-perm">Modul 06 &middot; Berechtigungen</span>
+    <h1>Linux Dateiberechtigungen</h1>
+    <p class="lead">Unter Linux hat jede Datei und jedes Verzeichnis ein Berechtigungssystem. Es legt fest wer lesen, schreiben und ausf&uuml;hren darf.</p>
+
+    <h2>Das rwx-System</h2>
+    <p>Jede Datei hat drei Berechtigungsgruppen, jede mit drei m&ouml;glichen Rechten:</p>
+
+    <div class="card-grid">
+      <div class="card-item cyan"><div class="card-label">r &ndash; read</div><h4>Lesen</h4><p>Datei: Inhalt lesen. Verzeichnis: Inhalt auflisten (ls).</p></div>
+      <div class="card-item yellow"><div class="card-label">w &ndash; write</div><h4>Schreiben</h4><p>Datei: Inhalt &auml;ndern. Verzeichnis: Dateien erstellen/l&ouml;schen.</p></div>
+      <div class="card-item green"><div class="card-label">x &ndash; execute</div><h4>Ausf&uuml;hren</h4><p>Datei: Als Programm starten. Verzeichnis: Betreten (cd).</p></div>
+    </div>
+
+    <p>Diese drei Rechte werden f&uuml;r drei Gruppen definiert:</p>
+    <div class="card-grid">
+      <div class="card-item blue"><div class="card-label">Owner</div><h4>Eigent&uuml;mer</h4><p>Der Benutzer dem die Datei geh&ouml;rt. Ersteller einer Datei wird automatisch Eigent&uuml;mer.</p></div>
+      <div class="card-item purple"><div class="card-label">Group</div><h4>Gruppe</h4><p>Eine Benutzergruppe. Alle Mitglieder teilen diese Rechte. N&uuml;tzlich f&uuml;r Teams.</p></div>
+      <div class="card-item red"><div class="card-label">Others</div><h4>Alle anderen</h4><p>Jeder der weder Eigent&uuml;mer noch Gruppenmitglied ist.</p></div>
+    </div>
+
+    <h2>Berechtigungen lesen</h2>
+    <p>Mit <code style="font-family:'DM Mono',monospace">ls -l</code> siehst du die Berechtigungen:</p>
+
+    <div class="code-block"><span class="code-lang">Linux Terminal</span><span class="cm"># ls -l Ausgabe</span>
+-<span class="asc">rwx</span><span class="hex">r-x</span><span class="bit0">r--</span>  1  ben  users  4096  Mai 17  datei.txt
+<span class="cm"> ^   ^    ^    ^</span>
+<span class="cm"> |   |    |    |</span>
+<span class="cm"> |   |    |    +-- Others: r-- = nur lesen</span>
+<span class="cm"> |   |    +------- Group:  r-x = lesen + ausf&uuml;hren</span>
+<span class="cm"> |   +------------ Owner:  rwx = alles</span>
+<span class="cm"> +---------------- Dateityp: - = Datei, d = Verzeichnis</span></div>
+
+    <h2>Oktalnotation</h2>
+    <p>Berechtigungen k&ouml;nnen als dreistellige Oktalzahl (Basis 8) angegeben werden. Jedes Recht hat einen Wert:</p>
+
+    <table class="data-table">
+      <thead><tr><th>Recht</th><th>Wert</th><th>Bin&auml;r</th></tr></thead>
+      <tbody>
+        <tr><td><strong>r</strong> (read)</td><td>4</td><td>100</td></tr>
+        <tr><td><strong>w</strong> (write)</td><td>2</td><td>010</td></tr>
+        <tr><td><strong>x</strong> (execute)</td><td>1</td><td>001</td></tr>
+        <tr><td><strong>rw-</strong></td><td>6 (4+2)</td><td>110</td></tr>
+        <tr><td><strong>rwx</strong></td><td>7 (4+2+1)</td><td>111</td></tr>
+        <tr><td><strong>r-x</strong></td><td>5 (4+1)</td><td>101</td></tr>
+      </tbody>
+    </table>
+
+    <div class="code-block"><span class="code-lang">Linux Terminal</span><span class="cm"># chmod: Berechtigungen &auml;ndern</span>
+chmod <span class="num">755</span> skript.sh   <span class="cm"># rwxr-xr-x: Owner alles, Group+Others lesen+ausf&uuml;hren</span>
+chmod <span class="num">644</span> datei.txt   <span class="cm"># rw-r--r--: Owner lesen+schreiben, Rest nur lesen</span>
+chmod <span class="num">600</span> privat.key  <span class="cm"># rw-------: Nur Owner kann lesen+schreiben</span>
+chmod <span class="num">777</span> datei.txt   <span class="cm"># rwxrwxrwx: Alle d&uuml;rfen alles (gef&auml;hrlich!)</span>
+
+<span class="cm"># Eigent&uuml;mer &auml;ndern</span>
+chown ben:users datei.txt  <span class="cm"># Eigent&uuml;mer=ben, Gruppe=users</span>
+
+<span class="cm"># Rekursiv f&uuml;r ganzen Ordner</span>
+chmod -R 755 /var/www/</div>
+
+    <div class="info-box red">
+      <div class="box-label">chmod 777 ist fast immer falsch</div>
+      <p>chmod 777 gibt jedem Benutzer auf dem System alle Rechte. Das ist ein Sicherheitsrisiko. Typische sichere Werte: 644 f&uuml;r Dateien (Owner schreibt, alle lesen), 755 f&uuml;r Verzeichnisse und ausf&uuml;hrbare Dateien.</p>
+    </div>
+
+    <h2>Spezielle Berechtigungen</h2>
+    <table class="data-table">
+      <thead><tr><th>Bit</th><th>Name</th><th>Wirkung</th></tr></thead>
+      <tbody>
+        <tr><td><strong>SUID</strong></td><td>Set User ID</td><td>Programm l&auml;uft mit den Rechten des Eigent&uuml;mers, nicht des Aufrufers. Z.B. <code style="font-family:'DM Mono',monospace">passwd</code> braucht Root-Rechte.</td></tr>
+        <tr><td><strong>SGID</strong></td><td>Set Group ID</td><td>Neue Dateien erben die Gruppe des Verzeichnisses. N&uuml;tzlich f&uuml;r geteilte Ordner.</td></tr>
+        <tr><td><strong>Sticky Bit</strong></td><td>Sticky</td><td>In einem Verzeichnis kann jeder nur seine eigenen Dateien l&ouml;schen. Standard bei <code style="font-family:'DM Mono',monospace">/tmp</code>.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="divider"></div>
+    <div style="display:flex;gap:0.75rem">
+      <button class="btn-nav" onclick="showPage('m5-quiz')">&#8592; Zur&uuml;ck</button>
+      <button class="btn-nav primary" onclick="showPage('m6-windows')">Weiter: Windows ACL &#8594;</button>
+    </div>
+  </div>
+
+  <!-- ══ MODUL 6: WINDOWS ACL ══ -->
+  <div class="page" id="page-m6-windows">
+    <span class="chapter-tag tag-perm">Modul 06 &middot; Berechtigungen</span>
+    <h1>Windows Dateiberechtigungen &amp; ACL</h1>
+    <p class="lead">Windows nutzt ein detaillierteres Berechtigungssystem als Linux: ACL (Access Control List = Zugriffssteuerungsliste). Statt 3 Gruppen mit 3 Rechten gibt es beliebig viele Eintr&auml;ge mit feingranularen Rechten.</p>
+
+    <h2>Was ist eine ACL?</h2>
+    <p>Eine ACL ist eine Liste von ACEs (Access Control Entries = Zugriffssteuerungseintr&auml;ge). Jeder Eintrag definiert f&uuml;r einen Benutzer oder eine Gruppe welche Aktionen erlaubt oder verboten sind.</p>
+
+    <div class="card-grid">
+      <div class="card-item cyan"><div class="card-label">Lesen</div><h4>Read</h4><p>Dateiinhalt und Attribute lesen.</p></div>
+      <div class="card-item blue"><div class="card-label">Schreiben</div><h4>Write</h4><p>Inhalt &auml;ndern, Attribute setzen.</p></div>
+      <div class="card-item green"><div class="card-label">Ausf&uuml;hren</div><h4>Execute</h4><p>Programm oder Skript starten.</p></div>
+      <div class="card-item yellow"><div class="card-label">L&ouml;schen</div><h4>Delete</h4><p>Datei oder Ordner l&ouml;schen.</p></div>
+      <div class="card-item purple"><div class="card-label">Vollzugriff</div><h4>Full Control</h4><p>Alle Rechte inkl. Berechtigungen &auml;ndern.</p></div>
+      <div class="card-item red"><div class="card-label">Verweigern</div><h4>Deny</h4><p>Explizites Verbot &uuml;berschreibt erlaubte Rechte.</p></div>
+    </div>
+
+    <h2>Vererbung</h2>
+    <p>Windows-Berechtigungen werden vererbt: Dateien in einem Ordner erben standardm&auml;&szlig;ig die Berechtigungen des Ordners. Das vereinfacht die Verwaltung, kann aber zu unerwartetem Verhalten f&uuml;hren wenn Berechtigungen explizit gesetzt werden.</p>
+
+    <h2>Berechtigungen &uuml;ber die Kommandozeile</h2>
+    <div class="code-block"><span class="code-lang">Windows CMD / PowerShell</span><span class="cm"># Berechtigungen anzeigen</span>
+icacls datei.txt
+
+<span class="cm"># Ausgabe-Beispiel:</span>
+datei.txt  VORDEFINIERT\Administratoren:(F)
+           NT-AUTORIT&Auml;T\SYSTEM:(F)
+           DESKTOP-PC\Ben:(RX)
+           VORDEFINIERT\Benutzer:(R)
+
+<span class="cm"># Berechtigung hinzuf&uuml;gen</span>
+icacls datei.txt /grant Ben:(R)
+
+<span class="cm"># Berechtigung entfernen</span>
+icacls datei.txt /remove Ben
+
+<span class="cm"># Vollzugriff geben</span>
+icacls datei.txt /grant Administratoren:(F)</div>
+
+    <h2>Linux vs. Windows Vergleich</h2>
+    <table class="data-table">
+      <thead><tr><th>Eigenschaft</th><th>Linux (rwx)</th><th>Windows (ACL)</th></tr></thead>
+      <tbody>
+        <tr><td>Grundkonzept</td><td>3 Gruppen, je 3 Bits</td><td>Liste von Eintr&auml;gen pro Benutzer/Gruppe</td></tr>
+        <tr><td>Granularit&auml;t</td><td>Grob (9 Bits)</td><td>Sehr fein (viele einzelne Rechte)</td></tr>
+        <tr><td>Vererbung</td><td>Nicht automatisch</td><td>Standardm&auml;&szlig;ig aktiv</td></tr>
+        <tr><td>Explizites Verbot</td><td>Nicht direkt m&ouml;glich</td><td>Deny-Eintr&auml;ge m&ouml;glich</td></tr>
+        <tr><td>Kommandozeile</td><td>chmod, chown</td><td>icacls, cacls</td></tr>
+        <tr><td>GUI</td><td>Dateimanager</td><td>Eigenschaften &rarr; Sicherheit</td></tr>
+      </tbody>
+    </table>
+
+    <div class="info-box blue">
+      <div class="box-label">F&uuml;r die IHK</div>
+      <p>Du solltest das Linux rwx-System mit Oktalnotation erkl&auml;ren k&ouml;nnen (chmod 755, 644, 600). F&uuml;r Windows: das ACL-Konzept kennen, den Unterschied zu Linux erkl&auml;ren k&ouml;nnen. icacls ist der moderne Windows-Befehl, cacls ist veraltet.</p>
+    </div>
+
+    <div class="divider"></div>
+    <div style="display:flex;gap:0.75rem">
+      <button class="btn-nav" onclick="showPage('m6-linux')">&#8592; Zur&uuml;ck</button>
+      <button class="btn-nav primary" onclick="showPage('m6-quiz')">Weiter: Quiz 6 &#8594;</button>
+    </div>
+  </div>
+
+  <!-- ══ MODUL 6: QUIZ ══ -->
+  <div class="page" id="page-m6-quiz">
+    <span class="chapter-tag tag-quiz">Modul 06 &middot; Quiz</span>
+    <h1>Quiz 6: Dateiberechtigungen</h1>
+    <p class="lead">6 Fragen zu Linux rwx und Windows ACL.</p>
+    <div class="quiz-container" id="quiz-m6">
+
+      <div class="quiz-question" data-q="0">
+        <div class="question-num">Frage 1 von 6</div>
+        <div class="question-text">Was bedeutet die Berechtigung <code style="font-family:'DM Mono',monospace">chmod 644</code> f&uuml;r eine Datei?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m6',0,'A')"><span class="option-letter">A</span> Alle Benutzer d&uuml;rfen lesen und schreiben</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',0,'B')"><span class="option-letter">B</span> Eigent&uuml;mer darf lesen und schreiben, Gruppe und Others d&uuml;rfen nur lesen</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',0,'C')"><span class="option-letter">C</span> Nur der Eigent&uuml;mer darf die Datei sehen</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',0,'D')"><span class="option-letter">D</span> Eigent&uuml;mer hat Vollzugriff, alle anderen haben keinen Zugriff</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m6-0"></div>
+      </div>
+
+      <div class="quiz-question" data-q="1">
+        <div class="question-num">Frage 2 von 6</div>
+        <div class="question-text">Du siehst bei <code style="font-family:'DM Mono',monospace">ls -l</code> die Ausgabe <code style="font-family:'DM Mono',monospace">drwxr-xr-x</code>. Was zeigt das erste Zeichen 'd' an?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m6',1,'A')"><span class="option-letter">A</span> Die Datei ist verschl&uuml;sselt</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',1,'B')"><span class="option-letter">B</span> Es handelt sich um ein Verzeichnis (Directory)</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',1,'C')"><span class="option-letter">C</span> Die Datei wurde gel&ouml;scht</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',1,'D')"><span class="option-letter">D</span> Der Eigent&uuml;mer hat Delete-Rechte</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m6-1"></div>
+      </div>
+
+      <div class="quiz-question" data-q="2">
+        <div class="question-num">Frage 3 von 6</div>
+        <div class="question-text">Was ist der Oktalwert f&uuml;r <code style="font-family:'DM Mono',monospace">rwx</code> (alle drei Rechte)?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m6',2,'A')"><span class="option-letter">A</span> 3</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',2,'B')"><span class="option-letter">B</span> 6</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',2,'C')"><span class="option-letter">C</span> 7</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',2,'D')"><span class="option-letter">D</span> 9</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m6-2"></div>
+      </div>
+
+      <div class="quiz-question" data-q="3">
+        <div class="question-num">Frage 4 von 6</div>
+        <div class="question-text">Was unterscheidet Windows ACL grundlegend vom Linux rwx-System?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m6',3,'A')"><span class="option-letter">A</span> Windows hat kein Berechtigungssystem</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',3,'B')"><span class="option-letter">B</span> ACL erlaubt beliebig viele Eintr&auml;ge pro Benutzer/Gruppe mit feingranularen Rechten und explizitem Verbot (Deny)</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',3,'C')"><span class="option-letter">C</span> Linux kann keine Berechtigungen f&uuml;r Gruppen setzen</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',3,'D')"><span class="option-letter">D</span> Windows ACL funktioniert nur auf NTFS-Partitionen aber nicht auf Dateien</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m6-3"></div>
+      </div>
+
+      <div class="quiz-question" data-q="4">
+        <div class="question-num">Frage 5 von 6</div>
+        <div class="question-text">Warum ist <code style="font-family:'DM Mono',monospace">chmod 777</code> fast immer eine schlechte Idee?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m6',4,'A')"><span class="option-letter">A</span> Weil der Befehl unter modernen Linux-Versionen nicht mehr existiert</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',4,'B')"><span class="option-letter">B</span> Weil 777 die Datei unsichtbar macht</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',4,'C')"><span class="option-letter">C</span> Weil damit jeder Benutzer auf dem System alle Rechte bekommt &ndash; lesen, schreiben und ausf&uuml;hren</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',4,'D')"><span class="option-letter">D</span> Weil die Datei danach nicht mehr ge&ouml;ffnet werden kann</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m6-4"></div>
+      </div>
+
+      <div class="quiz-question" data-q="5">
+        <div class="question-num">Frage 6 von 6</div>
+        <div class="question-text">Mit welchem Linux-Befehl &auml;nderst du den Eigent&uuml;mer einer Datei?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m6',5,'A')"><span class="option-letter">A</span> chmod</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',5,'B')"><span class="option-letter">B</span> chown</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',5,'C')"><span class="option-letter">C</span> icacls</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m6',5,'D')"><span class="option-letter">D</span> setowner</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m6-5"></div>
+      </div>
+
+      <div class="quiz-result" id="result-m6">
+        <div class="result-score" id="result-score-m6"></div>
+        <div class="result-label">Punkte erreicht</div>
+        <div class="result-msg" id="result-msg-m6"></div>
+        <button class="reset-btn" onclick="resetQuiz('m6')">Quiz zur&uuml;cksetzen</button>
+        <button class="btn-nav primary" style="margin-left:0.65rem" onclick="showPage('m7-mime')">Weiter zu Modul 7 &#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MODUL 7: MIME-TYPES ══ -->
+  <div class="page" id="page-m7-mime">
+    <span class="chapter-tag tag-mime">Modul 07 &middot; MIME &amp; Base64</span>
+    <h1>MIME-Types</h1>
+    <p class="lead">MIME (Multipurpose Internet Mail Extensions = Mehrzweck-Internet-Mail-Erweiterungen) ist ein Standard der den Inhaltstyp einer Datei f&uuml;r &Uuml;bertragungsprotokoll beschreibt. Urspr&uuml;nglich f&uuml;r E-Mail, heute in HTTP und &uuml;berall im Web.</p>
+
+    <h2>Warum MIME-Types?</h2>
+    <p>Wenn ein Browser eine Datei von einem Webserver empf&auml;ngt, wei&szlig; er nicht automatisch was er damit machen soll. Der Server sagt ihm per MIME-Type: "Das ist ein JPEG-Bild" oder "Das ist JavaScript-Code". Der Browser entscheidet dann wie er die Datei behandelt.</p>
+
+    <div class="info-box blue">
+      <div class="box-label">Format</div>
+      <p>MIME-Types haben immer das Format <code style="font-family:'DM Mono',monospace">typ/subtyp</code>. Beispiel: <code style="font-family:'DM Mono',monospace">image/jpeg</code> oder <code style="font-family:'DM Mono',monospace">text/html</code>.</p>
+    </div>
+
+    <h2>H&auml;ufige MIME-Types</h2>
+    <table class="data-table">
+      <thead><tr><th>MIME-Type</th><th>Dateiendung</th><th>Beschreibung</th></tr></thead>
+      <tbody>
+        <tr><td><code style="font-family:'DM Mono',monospace;color:var(--cyan)">text/html</code></td><td>.html</td><td>HTML-Webseite</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace;color:var(--cyan)">text/plain</code></td><td>.txt</td><td>Reiner Text</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace;color:var(--cyan)">text/css</code></td><td>.css</td><td>CSS-Stylesheet</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace;color:var(--cyan)">application/javascript</code></td><td>.js</td><td>JavaScript</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace;color:var(--cyan)">application/json</code></td><td>.json</td><td>JSON-Daten</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace;color:var(--cyan)">application/pdf</code></td><td>.pdf</td><td>PDF-Dokument</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace;color:var(--cyan)">application/zip</code></td><td>.zip</td><td>ZIP-Archiv</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace;color:var(--cyan)">image/jpeg</code></td><td>.jpg, .jpeg</td><td>JPEG-Bild</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace;color:var(--cyan)">image/png</code></td><td>.png</td><td>PNG-Bild</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace;color:var(--cyan)">image/svg+xml</code></td><td>.svg</td><td>SVG-Vektorgrafik</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace;color:var(--cyan)">audio/mpeg</code></td><td>.mp3</td><td>MP3-Audio</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace;color:var(--cyan)">video/mp4</code></td><td>.mp4</td><td>MP4-Video</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace;color:var(--cyan)">multipart/form-data</code></td><td>&ndash;</td><td>Datei-Upload in HTML-Formularen</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace;color:var(--cyan)">application/octet-stream</code></td><td>beliebig</td><td>Unbekannte Bin&auml;rdatei, Browser l&auml;dt herunter</td></tr>
+      </tbody>
+    </table>
+
+    <h2>MIME-Type im HTTP-Header</h2>
+    <div class="code-block"><span class="code-lang">HTTP Response Header</span>HTTP/1.1 200 OK
+Content-Type: <span class="asc">image/jpeg</span>
+Content-Length: 48293
+
+<span class="cm">[48293 Bytes JPEG-Daten folgen]</span></div>
+
+    <div class="code-block"><span class="code-lang">HTTP Request (Datei-Upload)</span>POST /upload HTTP/1.1
+Content-Type: <span class="asc">multipart/form-data; boundary=----FormBoundary</span>
+
+<span class="cm">------FormBoundary</span>
+Content-Disposition: form-data; name="file"; filename="bild.jpg"
+Content-Type: <span class="asc">image/jpeg</span>
+
+<span class="cm">[Bin&auml;rdaten der Datei]</span></div>
+
+    <div class="info-box yellow">
+      <div class="box-label">Sicherheitsrelevanz</div>
+      <p>Ein Angreifer k&ouml;nnte eine .exe-Datei als <code style="font-family:'DM Mono',monospace">image/jpeg</code> deklarieren. Server sollten deshalb den MIME-Type nicht blind vom Client &uuml;bernehmen, sondern den echten Inhalt pr&uuml;fen (Magic Bytes). Browser wiederum sollten den Server-MIME-Type respektieren (X-Content-Type-Options: nosniff Header).</p>
+    </div>
+
+    <div class="divider"></div>
+    <div style="display:flex;gap:0.75rem">
+      <button class="btn-nav" onclick="showPage('m6-quiz')">&#8592; Zur&uuml;ck</button>
+      <button class="btn-nav primary" onclick="showPage('m7-base64')">Weiter: Base64 &#8594;</button>
+    </div>
+  </div>
+
+  <!-- ══ MODUL 7: BASE64 ══ -->
+  <div class="page" id="page-m7-base64">
+    <span class="chapter-tag tag-mime">Modul 07 &middot; MIME &amp; Base64</span>
+    <h1>Base64</h1>
+    <p class="lead">Base64 ist eine Kodierungsmethode die Bin&auml;rdaten in eine Zeichenkette aus 64 druckbaren ASCII-Zeichen umwandelt. Kein Komprimieren, kein Verschl&uuml;sseln &ndash; nur umformen.</p>
+
+    <h2>Warum Base64?</h2>
+    <p>Manche &Uuml;bertragungsprotokolle wurden f&uuml;r reinen Text entworfen. Bin&auml;re Nullbytes (0x00) k&ouml;nnen dort als "Ende der Nachricht" interpretiert werden. Steuerzeichen k&ouml;nnen die &Uuml;bertragung stören. Base64 l&ouml;st das: es wandelt alle Bytes in druckbare Zeichen um.</p>
+
+    <div class="card-grid">
+      <div class="card-item cyan"><div class="card-label">E-Mail (SMTP)</div><h4>Anh&auml;nge</h4><p>E-Mail-Protokolle waren urspr&uuml;nglich nur f&uuml;r 7-Bit-ASCII. Bin&auml;re Anh&auml;nge werden als Base64 kodiert.</p></div>
+      <div class="card-item blue"><div class="card-label">Web / HTTP</div><h4>Data-URLs</h4><p>Kleine Bilder direkt in HTML oder CSS einbetten: <code style="font-family:'DM Mono',monospace">src="data:image/png;base64,..."</code></p></div>
+      <div class="card-item green"><div class="card-label">APIs / JSON</div><h4>Bin&auml;re Daten in JSON</h4><p>JSON kann keine Bin&auml;rdaten enthalten. Bilder oder Dateien werden als Base64-String verpackt.</p></div>
+      <div class="card-item yellow"><div class="card-label">Tokens / Auth</div><h4>JWT und &auml;hnliches</h4><p>JWT (JSON Web Token) ist Base64-kodierter JSON. Kein Schutz vor Lesen, nur sichere &Uuml;bertragung.</p></div>
+    </div>
+
+    <h2>Wie funktioniert Base64?</h2>
+    <p>Base64 nimmt je 3 Bytes (24 Bits) und teilt sie in vier 6-Bit-Gruppen. Jede 6-Bit-Gruppe wird einem der 64 druckbaren Zeichen zugeordnet: A-Z, a-z, 0-9, + und /.</p>
+
+    <div class="code-block"><span class="code-lang">Beispiel: "Hi" in Base64</span>H         = <span class="hex">0x48</span> = <span class="bit1">0100</span><span class="bit0">10</span><span class="bit1">00</span>
+i         = <span class="hex">0x69</span> = <span class="bit0">0110</span><span class="bit1">10</span><span class="bit0">01</span>
+(Padding) =        <span class="bit0">000000</span><span class="bit0">00</span>
+
+6-Bit-Gruppen: <span class="bit1">010010</span> <span class="bit0">00</span><span class="bit0">0110</span> <span class="bit1">1001</span><span class="bit0">00</span> <span class="bit0">000000</span>
+               = 18     =  6    = 36    =  0(=)
+               = <span class="asc">S</span>      = <span class="asc">G</span>     = <span class="asc">k</span>     = <span class="asc">=</span> (Padding)
+
+Ergebnis: <span class="asc">SGk=</span></div>
+
+    <div class="info-box red">
+      <div class="box-label">Base64 ist keine Verschl&uuml;sselung</div>
+      <p>Base64 kann von jedem sofort dekodiert werden. Es ist nur eine Umformung, keine Sicherheitsmethode. Ein Base64-kodiertes Passwort ist genauso unsicher wie ein Klartext-Passwort. F&uuml;r echte Sicherheit braucht man Verschl&uuml;sselung (AES, RSA) oder Hashing (bcrypt, SHA-256).</p>
+    </div>
+
+    <h2>Gr&ouml;&szlig;enzunahme</h2>
+    <p>Base64 macht Daten gr&ouml;&szlig;er: aus 3 Bytes werden 4 Zeichen. Das ist eine Zunahme von ca. <strong>33%</strong>. Eine 1 MB gro&szlig;e Datei wird als Base64 ca. 1,33 MB gro&szlig;.</p>
+
+    <div class="code-block"><span class="code-lang">Linux / macOS Terminal</span><span class="cm"># Datei zu Base64 kodieren</span>
+base64 bild.jpg > bild.b64
+
+<span class="cm"># Base64 dekodieren</span>
+base64 -d bild.b64 > bild_wiederhergestellt.jpg
+
+<span class="cm"># Text direkt kodieren</span>
+echo -n "Hallo Welt" | base64
+<span class="cm"># Ausgabe: SGFsbG8gV2VsdA==</span></div>
+
+    <div class="divider"></div>
+    <div style="display:flex;gap:0.75rem">
+      <button class="btn-nav" onclick="showPage('m7-mime')">&#8592; Zur&uuml;ck</button>
+      <button class="btn-nav primary" onclick="showPage('m7-quiz')">Weiter: Quiz 7 &#8594;</button>
+    </div>
+  </div>
+
+  <!-- ══ MODUL 7: QUIZ ══ -->
+  <div class="page" id="page-m7-quiz">
+    <span class="chapter-tag tag-quiz">Modul 07 &middot; Quiz</span>
+    <h1>Quiz 7: MIME &amp; Base64</h1>
+    <p class="lead">6 Fragen.</p>
+    <div class="quiz-container" id="quiz-m7">
+
+      <div class="quiz-question" data-q="0">
+        <div class="question-num">Frage 1 von 6</div>
+        <div class="question-text">Wof&uuml;r steht MIME?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m7',0,'A')"><span class="option-letter">A</span> Media Internet Management Extension</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',0,'B')"><span class="option-letter">B</span> Multipurpose Internet Mail Extensions</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',0,'C')"><span class="option-letter">C</span> Multiple Input Method Encoding</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',0,'D')"><span class="option-letter">D</span> Managed Image and Media Exchange</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m7-0"></div>
+      </div>
+
+      <div class="quiz-question" data-q="1">
+        <div class="question-num">Frage 2 von 6</div>
+        <div class="question-text">Ein Webserver liefert eine Datei mit dem Header <code style="font-family:'DM Mono',monospace">Content-Type: application/octet-stream</code>. Was macht der Browser damit?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m7',1,'A')"><span class="option-letter">A</span> Er zeigt die Datei als Text an</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',1,'B')"><span class="option-letter">B</span> Er l&auml;dt die Datei herunter da der Typ unbekannt ist</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',1,'C')"><span class="option-letter">C</span> Er blockiert die Datei aus Sicherheitsgr&uuml;nden</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',1,'D')"><span class="option-letter">D</span> Er &ouml;ffnet die Datei im Standard-Programm</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m7-1"></div>
+      </div>
+
+      <div class="quiz-question" data-q="2">
+        <div class="question-num">Frage 3 von 6</div>
+        <div class="question-text">Was ist Base64?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m7',2,'A')"><span class="option-letter">A</span> Ein Verschl&uuml;sselungsverfahren mit 64-Bit-Schl&uuml;ssel</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',2,'B')"><span class="option-letter">B</span> Ein Komprimierungsformat f&uuml;r Bin&auml;rdaten</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',2,'C')"><span class="option-letter">C</span> Eine Kodierungsmethode die Bin&auml;rdaten in 64 druckbare ASCII-Zeichen umwandelt</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',2,'D')"><span class="option-letter">D</span> Ein Dateiformat f&uuml;r gro&szlig;e Bin&auml;rdateien</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m7-2"></div>
+      </div>
+
+      <div class="quiz-question" data-q="3">
+        <div class="question-num">Frage 4 von 6</div>
+        <div class="question-text">Um wie viel Prozent w&auml;chst eine Datei durch Base64-Kodierung ungef&auml;hr?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m7',3,'A')"><span class="option-letter">A</span> 10%</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',3,'B')"><span class="option-letter">B</span> 33%</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',3,'C')"><span class="option-letter">C</span> 50%</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',3,'D')"><span class="option-letter">D</span> 100%</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m7-3"></div>
+      </div>
+
+      <div class="quiz-question" data-q="4">
+        <div class="question-num">Frage 5 von 6</div>
+        <div class="question-text">Du findest in einem Code-Repository ein Base64-kodiertes Passwort. Ist es sicher?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m7',4,'A')"><span class="option-letter">A</span> Ja, Base64 ist eine Verschl&uuml;sselung</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',4,'B')"><span class="option-letter">B</span> Ja, aber nur wenn es l&auml;nger als 32 Zeichen ist</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',4,'C')"><span class="option-letter">C</span> Nein, Base64 ist keine Verschl&uuml;sselung und kann sofort dekodiert werden</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',4,'D')"><span class="option-letter">D</span> Ja, weil Repositories privat sind</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m7-4"></div>
+      </div>
+
+      <div class="quiz-question" data-q="5">
+        <div class="question-num">Frage 6 von 6</div>
+        <div class="question-text">Was ist der MIME-Type f&uuml;r eine JSON-Datei?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m7',5,'A')"><span class="option-letter">A</span> text/json</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',5,'B')"><span class="option-letter">B</span> data/json</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',5,'C')"><span class="option-letter">C</span> application/json</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m7',5,'D')"><span class="option-letter">D</span> file/json</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m7-5"></div>
+      </div>
+
+      <div class="quiz-result" id="result-m7">
+        <div class="result-score" id="result-score-m7"></div>
+        <div class="result-label">Punkte erreicht</div>
+        <div class="result-msg" id="result-msg-m7"></div>
+        <button class="reset-btn" onclick="resetQuiz('m7')">Quiz zur&uuml;cksetzen</button>
+        <button class="btn-nav primary" style="margin-left:0.65rem" onclick="showPage('final-quiz')">Zum Gesamtquiz &#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ GESAMTQUIZ ══ -->
+  <div class="page" id="page-final-quiz">
+    <span class="chapter-tag tag-quiz">Abschluss &middot; Gesamtquiz</span>
+    <h1>Gesamtquiz</h1>
+    <p class="lead">20 Fragen aus allen Modulen. Zeigt wo du sicher bist und wo noch Nachholbedarf besteht.</p>
+    <div class="quiz-container" id="quiz-final">
+
+      <div class="quiz-question" data-q="0"><div class="question-num">Frage 1 von 20</div><div class="question-text">Wie viele verschiedene Werte kann ein Byte darstellen?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',0,'A')"><span class="option-letter">A</span> 8</button><button class="quiz-option" onclick="selectOpt(this,'final',0,'B')"><span class="option-letter">B</span> 128</button><button class="quiz-option" onclick="selectOpt(this,'final',0,'C')"><span class="option-letter">C</span> 256</button><button class="quiz-option" onclick="selectOpt(this,'final',0,'D')"><span class="option-letter">D</span> 1024</button></div><div class="quiz-feedback" id="fb-final-0"></div></div>
+
+      <div class="quiz-question" data-q="1"><div class="question-num">Frage 2 von 20</div><div class="question-text">Was ist ein Inode unter Linux?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',1,'A')"><span class="option-letter">A</span> Ein Netzwerk-Interface</button><button class="quiz-option" onclick="selectOpt(this,'final',1,'B')"><span class="option-letter">B</span> Ein Metadaten-Eintrag der alle Informationen &uuml;ber eine Datei speichert</button><button class="quiz-option" onclick="selectOpt(this,'final',1,'C')"><span class="option-letter">C</span> Ein Benutzer-Account</button><button class="quiz-option" onclick="selectOpt(this,'final',1,'D')"><span class="option-letter">D</span> Ein Verzeichnistyp</button></div><div class="quiz-feedback" id="fb-final-1"></div></div>
+
+      <div class="quiz-question" data-q="2"><div class="question-num">Frage 3 von 20</div><div class="question-text">Welches Dateisystem hat eine maximale Dateigr&ouml;&szlig;e von 4 GB?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',2,'A')"><span class="option-letter">A</span> NTFS</button><button class="quiz-option" onclick="selectOpt(this,'final',2,'B')"><span class="option-letter">B</span> FAT32</button><button class="quiz-option" onclick="selectOpt(this,'final',2,'C')"><span class="option-letter">C</span> ext4</button><button class="quiz-option" onclick="selectOpt(this,'final',2,'D')"><span class="option-letter">D</span> exFAT</button></div><div class="quiz-feedback" id="fb-final-2"></div></div>
+
+      <div class="quiz-question" data-q="3"><div class="question-num">Frage 4 von 20</div><div class="question-text">Wof&uuml;r steht das 0x-Pr&auml;fix vor einer Zahl?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',3,'A')"><span class="option-letter">A</span> Die Zahl ist negativ</button><button class="quiz-option" onclick="selectOpt(this,'final',3,'B')"><span class="option-letter">B</span> Die Zahl ist oktal</button><button class="quiz-option" onclick="selectOpt(this,'final',3,'C')"><span class="option-letter">C</span> Die Zahl ist hexadezimal</button><button class="quiz-option" onclick="selectOpt(this,'final',3,'D')"><span class="option-letter">D</span> Die Zahl ist bin&auml;r</button></div><div class="quiz-feedback" id="fb-final-3"></div></div>
+
+      <div class="quiz-question" data-q="4"><div class="question-num">Frage 5 von 20</div><div class="question-text">Was sind Magic Bytes?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',4,'A')"><span class="option-letter">A</span> Zuf&auml;llige Bytes am Dateiende</button><button class="quiz-option" onclick="selectOpt(this,'final',4,'B')"><span class="option-letter">B</span> Verschl&uuml;sselungsschl&uuml;ssel</button><button class="quiz-option" onclick="selectOpt(this,'final',4,'C')"><span class="option-letter">C</span> Eine eindeutige Byte-Signatur am Dateianfang die den Dateityp identifiziert</button><button class="quiz-option" onclick="selectOpt(this,'final',4,'D')"><span class="option-letter">D</span> Die Dateiendung in Bin&auml;rform</button></div><div class="quiz-feedback" id="fb-final-4"></div></div>
+
+      <div class="quiz-question" data-q="5"><div class="question-num">Frage 6 von 20</div><div class="question-text">Was bedeutet LF bei Zeilenenden?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',5,'A')"><span class="option-letter">A</span> Line Fix</button><button class="quiz-option" onclick="selectOpt(this,'final',5,'B')"><span class="option-letter">B</span> Line Feed (Zeilenvorschub), Byte 0x0A, Linux-Standard</button><button class="quiz-option" onclick="selectOpt(this,'final',5,'C')"><span class="option-letter">C</span> Last File</button><button class="quiz-option" onclick="selectOpt(this,'final',5,'D')"><span class="option-letter">D</span> Byte 0x0D, Windows-Standard</button></div><div class="quiz-feedback" id="fb-final-5"></div></div>
+
+      <div class="quiz-question" data-q="6"><div class="question-num">Frage 7 von 20</div><div class="question-text">Welches Bildformat ist eine Vektorgrafik?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',6,'A')"><span class="option-letter">A</span> JPEG</button><button class="quiz-option" onclick="selectOpt(this,'final',6,'B')"><span class="option-letter">B</span> PNG</button><button class="quiz-option" onclick="selectOpt(this,'final',6,'C')"><span class="option-letter">C</span> GIF</button><button class="quiz-option" onclick="selectOpt(this,'final',6,'D')"><span class="option-letter">D</span> SVG</button></div><div class="quiz-feedback" id="fb-final-6"></div></div>
+
+      <div class="quiz-question" data-q="7"><div class="question-num">Frage 8 von 20</div><div class="question-text">Was bedeutet chmod 755?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',7,'A')"><span class="option-letter">A</span> rwxrwxrwx</button><button class="quiz-option" onclick="selectOpt(this,'final',7,'B')"><span class="option-letter">B</span> rwxr-xr-x</button><button class="quiz-option" onclick="selectOpt(this,'final',7,'C')"><span class="option-letter">C</span> rw-r--r--</button><button class="quiz-option" onclick="selectOpt(this,'final',7,'D')"><span class="option-letter">D</span> rwx------</button></div><div class="quiz-feedback" id="fb-final-7"></div></div>
+
+      <div class="quiz-question" data-q="8"><div class="question-num">Frage 9 von 20</div><div class="question-text">Was ist Base64?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',8,'A')"><span class="option-letter">A</span> Verschl&uuml;sselung</button><button class="quiz-option" onclick="selectOpt(this,'final',8,'B')"><span class="option-letter">B</span> Komprimierung</button><button class="quiz-option" onclick="selectOpt(this,'final',8,'C')"><span class="option-letter">C</span> Kodierung von Bin&auml;rdaten in druckbare ASCII-Zeichen</button><button class="quiz-option" onclick="selectOpt(this,'final',8,'D')"><span class="option-letter">D</span> Ein Archivformat</button></div><div class="quiz-feedback" id="fb-final-8"></div></div>
+
+      <div class="quiz-question" data-q="9"><div class="question-num">Frage 10 von 20</div><div class="question-text">Welches Audioformat ist verlustfrei?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',9,'A')"><span class="option-letter">A</span> MP3</button><button class="quiz-option" onclick="selectOpt(this,'final',9,'B')"><span class="option-letter">B</span> AAC</button><button class="quiz-option" onclick="selectOpt(this,'final',9,'C')"><span class="option-letter">C</span> OGG</button><button class="quiz-option" onclick="selectOpt(this,'final',9,'D')"><span class="option-letter">D</span> FLAC</button></div><div class="quiz-feedback" id="fb-final-9"></div></div>
+
+      <div class="quiz-question" data-q="10"><div class="question-num">Frage 11 von 20</div><div class="question-text">Was ist Journaling in einem Dateisystem?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',10,'A')"><span class="option-letter">A</span> Automatisches Backup</button><button class="quiz-option" onclick="selectOpt(this,'final',10,'B')"><span class="option-letter">B</span> Komprimierung von Metadaten</button><button class="quiz-option" onclick="selectOpt(this,'final',10,'C')"><span class="option-letter">C</span> Aufzeichnen geplanter &Auml;nderungen vor der Ausf&uuml;hrung f&uuml;r Absturzwiederherstellung</button><button class="quiz-option" onclick="selectOpt(this,'final',10,'D')"><span class="option-letter">D</span> Verschl&uuml;sselung von Dateien</button></div><div class="quiz-feedback" id="fb-final-10"></div></div>
+
+      <div class="quiz-question" data-q="11"><div class="question-num">Frage 12 von 20</div><div class="question-text">Wie viele Bytes ben&ouml;tigt ein Emoji (z.B. U+1F600) in UTF-8?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',11,'A')"><span class="option-letter">A</span> 1</button><button class="quiz-option" onclick="selectOpt(this,'final',11,'B')"><span class="option-letter">B</span> 2</button><button class="quiz-option" onclick="selectOpt(this,'final',11,'C')"><span class="option-letter">C</span> 3</button><button class="quiz-option" onclick="selectOpt(this,'final',11,'D')"><span class="option-letter">D</span> 4</button></div><div class="quiz-feedback" id="fb-final-11"></div></div>
+
+      <div class="quiz-question" data-q="12"><div class="question-num">Frage 13 von 20</div><div class="question-text">Was ist der MIME-Type f&uuml;r HTML?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',12,'A')"><span class="option-letter">A</span> application/html</button><button class="quiz-option" onclick="selectOpt(this,'final',12,'B')"><span class="option-letter">B</span> text/html</button><button class="quiz-option" onclick="selectOpt(this,'final',12,'C')"><span class="option-letter">C</span> web/html</button><button class="quiz-option" onclick="selectOpt(this,'final',12,'D')"><span class="option-letter">D</span> document/html</button></div><div class="quiz-feedback" id="fb-final-12"></div></div>
+
+      <div class="quiz-question" data-q="13"><div class="question-num">Frage 14 von 20</div><div class="question-text">Was ist ein .tar.gz?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',13,'A')"><span class="option-letter">A</span> Ein verschl&uuml;sseltes ZIP</button><button class="quiz-option" onclick="selectOpt(this,'final',13,'B')"><span class="option-letter">B</span> Ein TAR-Archiv komprimiert mit Gzip</button><button class="quiz-option" onclick="selectOpt(this,'final',13,'C')"><span class="option-letter">C</span> Ein Windows-Backup-Format</button><button class="quiz-option" onclick="selectOpt(this,'final',13,'D')"><span class="option-letter">D</span> Ein Videoformat</button></div><div class="quiz-feedback" id="fb-final-13"></div></div>
+
+      <div class="quiz-question" data-q="14"><div class="question-num">Frage 15 von 20</div><div class="question-text">Warum kann eine gel&ouml;schte Datei oft wiederhergestellt werden?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',14,'A')"><span class="option-letter">A</span> Windows speichert immer eine Kopie</button><button class="quiz-option" onclick="selectOpt(this,'final',14,'B')"><span class="option-letter">B</span> Nur der Metadaten-Eintrag wird als frei markiert, Dateidaten bleiben bis zum &Uuml;berschreiben</button><button class="quiz-option" onclick="selectOpt(this,'final',14,'C')"><span class="option-letter">C</span> Festplatten l&ouml;schen nie wirklich</button><button class="quiz-option" onclick="selectOpt(this,'final',14,'D')"><span class="option-letter">D</span> Das Dateisystem verschl&uuml;sselt gel&ouml;schte Daten</button></div><div class="quiz-feedback" id="fb-final-14"></div></div>
+
+      <div class="quiz-question" data-q="15"><div class="question-num">Frage 16 von 20</div><div class="question-text">Was macht <code style="font-family:'DM Mono',monospace">chmod 600</code>?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',15,'A')"><span class="option-letter">A</span> Alle d&uuml;rfen lesen</button><button class="quiz-option" onclick="selectOpt(this,'final',15,'B')"><span class="option-letter">B</span> Nur Owner darf lesen und schreiben, alle anderen haben keinen Zugriff</button><button class="quiz-option" onclick="selectOpt(this,'final',15,'C')"><span class="option-letter">C</span> Owner alles, Gruppe lesen</button><button class="quiz-option" onclick="selectOpt(this,'final',15,'D')"><span class="option-letter">D</span> Datei wird versteckt</button></div><div class="quiz-feedback" id="fb-final-15"></div></div>
+
+      <div class="quiz-question" data-q="16"><div class="question-num">Frage 17 von 20</div><div class="question-text">Was ist verlustbehaftete Komprimierung?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',16,'A')"><span class="option-letter">A</span> Komprimierung die die Datei besch&auml;digt</button><button class="quiz-option" onclick="selectOpt(this,'final',16,'B')"><span class="option-letter">B</span> Komprimierung bei der Informationen dauerhaft gel&ouml;scht werden um kleinere Dateien zu erzielen</button><button class="quiz-option" onclick="selectOpt(this,'final',16,'C')"><span class="option-letter">C</span> Komprimierung die die Originaldatei exakt wiederherstellen kann</button><button class="quiz-option" onclick="selectOpt(this,'final',16,'D')"><span class="option-letter">D</span> Nur bei Audiodateien m&ouml;glich</button></div><div class="quiz-feedback" id="fb-final-16"></div></div>
+
+      <div class="quiz-question" data-q="17"><div class="question-num">Frage 18 von 20</div><div class="question-text">Warum ist UTF-8 r&uuml;ckw&auml;rtskompatibel mit ASCII?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',17,'A')"><span class="option-letter">A</span> Weil UTF-8 nur 7 Bit nutzt</button><button class="quiz-option" onclick="selectOpt(this,'final',17,'B')"><span class="option-letter">B</span> Weil ASCII-Zeichen (0-127) in UTF-8 identisch mit einem Byte kodiert werden</button><button class="quiz-option" onclick="selectOpt(this,'final',17,'C')"><span class="option-letter">C</span> Weil beide von Microsoft entwickelt wurden</button><button class="quiz-option" onclick="selectOpt(this,'final',17,'D')"><span class="option-letter">D</span> Weil UTF-8 alle ASCII-Dateien automatisch konvertiert</button></div><div class="quiz-feedback" id="fb-final-17"></div></div>
+
+      <div class="quiz-question" data-q="18"><div class="question-num">Frage 19 von 20</div><div class="question-text">Was ist ACL (Access Control List)?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',18,'A')"><span class="option-letter">A</span> Ein Linux-Befehl zum Setzen von Berechtigungen</button><button class="quiz-option" onclick="selectOpt(this,'final',18,'B')"><span class="option-letter">B</span> Ein Windows-Dateisystem</button><button class="quiz-option" onclick="selectOpt(this,'final',18,'C')"><span class="option-letter">C</span> Eine Liste von Berechtigungseintr&auml;gen pro Benutzer/Gruppe mit feingranularen Rechten</button><button class="quiz-option" onclick="selectOpt(this,'final',18,'D')"><span class="option-letter">D</span> Ein Netzwerkprotokoll</button></div><div class="quiz-feedback" id="fb-final-18"></div></div>
+
+      <div class="quiz-question" data-q="19"><div class="question-num">Frage 20 von 20</div><div class="question-text">Eine .docx-Datei hat dieselben Magic Bytes wie eine ZIP-Datei. Was bedeutet das?</div><div class="quiz-options"><button class="quiz-option" onclick="selectOpt(this,'final',19,'A')"><span class="option-letter">A</span> Die Datei ist besch&auml;digt</button><button class="quiz-option" onclick="selectOpt(this,'final',19,'B')"><span class="option-letter">B</span> Eine .docx-Datei ist intern ein ZIP-Archiv mit XML-Dateien</button><button class="quiz-option" onclick="selectOpt(this,'final',19,'C')"><span class="option-letter">C</span> Zufall</button><button class="quiz-option" onclick="selectOpt(this,'final',19,'D')"><span class="option-letter">D</span> ZIP und DOCX sind dasselbe Format</button></div><div class="quiz-feedback" id="fb-final-19"></div></div>
+
+      <div class="quiz-result" id="result-final">
+        <div class="result-score" id="result-score-final"></div>
+        <div class="result-label">Punkte erreicht</div>
+        <div class="result-msg" id="result-msg-final"></div>
+        <div id="final-recommendations" style="margin:1rem 0;text-align:left"></div>
+        <button class="reset-btn" onclick="resetQuiz('final')">Gesamtquiz wiederholen</button>
+      </div>
+    </div>
+  </div>
 
 </main>
 </div>
@@ -2426,6 +2918,97 @@ QUIZ_DATA.m5 = {
       wrong: "Falsch. ZIP hat kein Gr\u00f6\u00dfenlimit das relevant w\u00e4re. Kein Schreibschutz. Das Betriebssystem erlaubt verschachtelte Archive. Der Grund ist algorithmisch: keine Muster mehr in komprimierten Daten." }
   ]
 };
+
+
+QUIZ_DATA.m6 = {
+  correct: ['B','B','C','B','C','B'],
+  feedback: [
+    { correct: "Richtig. 644 = 6(rw-) 4(r--) 4(r--). Eigent\u00fcmer darf lesen+schreiben, Gruppe und Others nur lesen. Standard f\u00fcr die meisten Dateien.",
+      wrong: "Falsch. 644 = rw-r--r--. 6 = r+w = 4+2. 4 = r = 4. Eigent\u00fcmer schreibt, alle anderen lesen nur." },
+    { correct: "Richtig. Das erste Zeichen bei ls -l zeigt den Dateityp: d = Directory (Verzeichnis), - = normale Datei, l = symbolischer Link.",
+      wrong: "Falsch. Das erste Zeichen bei ls -l ist der Dateityp. d steht f\u00fcr Directory (Verzeichnis). Es hat nichts mit Verschl\u00fcsselung, L\u00f6schung oder Delete-Rechten zu tun." },
+    { correct: "Richtig. r=4, w=2, x=1. rwx = 4+2+1 = 7. Das ist der h\u00f6chste Wert f\u00fcr eine Berechtigungsgruppe.",
+      wrong: "Falsch. r=4, w=2, x=1. rwx = 4+2+1 = 7. Nicht 3 (das w\u00e4re wx), nicht 6 (das w\u00e4re rw-), nicht 9 (Oktalsystem geht nur bis 7)." },
+    { correct: "Richtig. ACL erlaubt beliebig viele Eintr\u00e4ge f\u00fcr beliebige Benutzer und Gruppen, feingranulare Einzelrechte und explizite Deny-Eintr\u00e4ge die erlaubte Rechte \u00fcberschreiben.",
+      wrong: "Falsch. Windows hat ein sehr detailliertes Berechtigungssystem. Linux kann sehr wohl Gruppenrechte setzen. ACL gilt f\u00fcr Dateien auf NTFS-Partitionen." },
+    { correct: "Richtig. chmod 777 = rwxrwxrwx. Alle drei Gruppen (Owner, Group, Others) bekommen alle drei Rechte. Das bedeutet: jeder Benutzer auf dem System darf die Datei lesen, schreiben und ausf\u00fchren.",
+      wrong: "Falsch. chmod 777 existiert in modernen Linux-Versionen. Es macht die Datei nicht unsichtbar und blockiert keinen Zugriff. Es \u00f6ffnet ihn zu weit." },
+    { correct: "Richtig. chown \u00e4ndert den Eigent\u00fcmer (change owner). chmod \u00e4ndert die Berechtigungen (change mode). icacls ist der Windows-Befehl. setowner existiert nicht.",
+      wrong: "Falsch. chmod \u00e4ndert Berechtigungen, nicht den Eigent\u00fcmer. icacls ist Windows. setowner existiert nicht als Standardbefehl. chown (change owner) ist korrekt." }
+  ]
+};
+
+QUIZ_DATA.m7 = {
+  correct: ['B','B','C','B','C','C'],
+  feedback: [
+    { correct: "Richtig. MIME = Multipurpose Internet Mail Extensions. Urspr\u00fcnglich f\u00fcr E-Mail-Anh\u00e4nge entwickelt, heute Standard in HTTP und allen Web-Protokollen.",
+      wrong: "Falsch. MIME steht f\u00fcr Multipurpose Internet Mail Extensions. Die anderen Optionen sind erfunden." },
+    { correct: "Richtig. application/octet-stream bedeutet 'unbekannte Bin\u00e4rdatei'. Browser wissen nicht wie sie sie anzeigen sollen und bieten sie zum Download an.",
+      wrong: "Falsch. application/octet-stream ist der Fallback f\u00fcr unbekannte Typen. Browser blockieren nichts, zeigen es nicht als Text an und \u00f6ffnen es nicht automatisch. Sie bieten es zum Download an." },
+    { correct: "Richtig. Base64 wandelt Bin\u00e4rdaten in 64 druckbare ASCII-Zeichen um. Kein Schutz, keine Komprimierung, nur Umformung f\u00fcr textsichere \u00dcbertragung.",
+      wrong: "Falsch. Base64 ist keine Verschl\u00fcsselung (kein Schutz vor Lesen), keine Komprimierung (Daten werden gr\u00f6\u00dfer) und kein Dateiformat." },
+    { correct: "Richtig. Base64 kodiert 3 Bytes in 4 Zeichen: 3 Bytes * 8/6 = 4 Zeichen. Das entspricht einer Vergr\u00f6\u00dferung von 4/3 = ca. 133%, also +33%.",
+      wrong: "Falsch. Base64 macht Daten ca. 33% gr\u00f6\u00dfer (3 Bytes werden zu 4 Zeichen). 10% w\u00e4re zu wenig, 50% oder 100% zu viel." },
+    { correct: "Richtig. Base64 ist keine Verschl\u00fcsselung. Jeder kann Base64 in Sekunden dekodieren. Ein Base64-Passwort ist genauso unsicher wie Klartext.",
+      wrong: "Falsch. Base64 bietet keinerlei Sicherheit. Egal wie lang es ist, es kann sofort dekodiert werden. Ob das Repository privat ist \u00e4ndert nichts an der Unsicherheit der Kodierung selbst." },
+    { correct: "Richtig. Der MIME-Type f\u00fcr JSON ist application/json. Das Format application/ wird f\u00fcr strukturierte Daten verwendet die kein reiner Text sind.",
+      wrong: "Falsch. Der MIME-Type f\u00fcr JSON ist application/json. text/json ist nicht standardisiert. data/ und file/ sind keine g\u00fcltigen MIME-Typen." }
+  ]
+};
+
+QUIZ_DATA.final = {
+  correct: ['C','B','B','C','C','B','D','B','C','D','C','D','B','B','B','B','B','B','C','B'],
+  feedback: [
+    { correct: "Richtig. 2 hoch 8 = 256 m\u00f6gliche Werte (0 bis 255).", wrong: "Falsch. Ein Byte hat 8 Bits. 2 hoch 8 = 256 m\u00f6gliche Werte, nicht 8 oder 128." },
+    { correct: "Richtig. Ein Inode speichert alle Metadaten einer Datei: Berechtigungen, Zeitstempel, Eigent\u00fcmer, Zeiger auf Datenbytes. Alles au\u00dfer dem Dateinamen.", wrong: "Falsch. Inode steht f\u00fcr Index Node. Es ist der interne Metadaten-Eintrag einer Datei im Linux-Dateisystem." },
+    { correct: "Richtig. FAT32 hat ein hartes Limit von 4 GB minus 1 Byte pro Datei.", wrong: "Falsch. NTFS und exFAT haben keine relevante Gr\u00f6\u00dfenbegrenzung. ext4 unterst\u00fctzt bis 16 TB. Nur FAT32 hat die 4-GB-Grenze." },
+    { correct: "Richtig. 0x ist das Pr\u00e4fix f\u00fcr Hexadezimalzahlen. 0b w\u00e4re Bin\u00e4r, 0o w\u00e4re Oktal.", wrong: "Falsch. 0x steht f\u00fcr hexadezimal, nicht negativ, oktal oder bin\u00e4r." },
+    { correct: "Richtig. Magic Bytes sind eine standardisierte Byte-Signatur am Dateianfang die den echten Typ identifiziert, unabh\u00e4ngig von der Dateiendung.", wrong: "Falsch. Magic Bytes sind keine Zufallsbytes, keine Verschl\u00fcsselungsschl\u00fcssel und keine kodierte Dateiendung." },
+    { correct: "Richtig. LF = Line Feed = Zeilenvorschub, Byte 0x0A. Linux-Standard f\u00fcr Zeilenenden.", wrong: "Falsch. LF steht f\u00fcr Line Feed (Zeilenvorschub), Byte 0x0A. 0x0D ist CR (Carriage Return)." },
+    { correct: "Richtig. SVG (Scalable Vector Graphics) ist eine Vektorgrafik. JPEG, PNG und GIF sind Rastergrafiken.", wrong: "Falsch. JPEG, PNG und GIF sind Rastergrafiken (Pixel). SVG ist die einzige Vektorgrafik in der Liste." },
+    { correct: "Richtig. 755 = 7(rwx) 5(r-x) 5(r-x). Owner alles, Group und Others lesen+ausf\u00fchren.", wrong: "Falsch. 755 = rwxr-xr-x. 7=rwx, 5=r-x (4+1). 777 w\u00e4re rwxrwxrwx, 644 w\u00e4re rw-r--r--, 700 w\u00e4re rwx------." },
+    { correct: "Richtig. Base64 kodiert Bin\u00e4rdaten in druckbare ASCII-Zeichen. Kein Schutz, keine Komprimierung.", wrong: "Falsch. Base64 ist keine Verschl\u00fcsselung, keine Komprimierung und kein Archivformat." },
+    { correct: "Richtig. FLAC (Free Lossless Audio Codec) ist verlustfrei. MP3, AAC und OGG sind verlustbehaftet.", wrong: "Falsch. MP3, AAC und OGG sind verlustbehaftet. Nur FLAC ist verlustfrei." },
+    { correct: "Richtig. Journaling schreibt geplante \u00c4nderungen ins Journal bevor sie ausgef\u00fchrt werden. Bei Absturz kann das System den konsistenten Zustand wiederherstellen.", wrong: "Falsch. Journaling ist kein Backup, keine Komprimierung und keine Verschl\u00fcsselung." },
+    { correct: "Richtig. Emojis ab U+10000 ben\u00f6tigen 4 Bytes in UTF-8.", wrong: "Falsch. ASCII (0-127) = 1 Byte. Umlaute = 2 Bytes. Euro-Zeichen = 3 Bytes. Emojis = 4 Bytes." },
+    { correct: "Richtig. MIME-Type f\u00fcr HTML ist text/html.", wrong: "Falsch. Der MIME-Type f\u00fcr HTML ist text/html. application/html, web/html und document/html sind nicht standardisiert." },
+    { correct: "Richtig. TAR packt, Gzip komprimiert. .tar.gz = beide zusammen. Linux-Standard f\u00fcr Softwarepakete.", wrong: "Falsch. .tar.gz ist kein verschl\u00fcsseltes ZIP, kein Windows-Format und kein Video." },
+    { correct: "Richtig. L\u00f6schen markiert nur den Metadaten-Eintrag als frei. Die eigentlichen Bytes bleiben bis zum \u00dcberschreiben.", wrong: "Falsch. Windows speichert keine automatische Kopie. Das Dateisystem l\u00f6scht keine Bytes sofort." },
+    { correct: "Richtig. 600 = rw-------. Nur Owner darf lesen und schreiben. Standard f\u00fcr SSH-Keys und private Schl\u00fcssel.", wrong: "Falsch. 600 = rw-------. Nur Owner (6=rw), Gruppe und Others haben keinen Zugriff (0)." },
+    { correct: "Richtig. Verlustbehaftet l\u00f6scht dauerhaft Informationen die als unwichtig eingestuft werden. JPEG, MP3, H.264 sind Beispiele.", wrong: "Falsch. Verlustbehaftet besch\u00e4digt die Datei nicht, verbessert aber auch die Qualit\u00e4t nicht. Verlustfreie Komprimierung kann exakt wiederherstellen." },
+    { correct: "Richtig. ASCII-Zeichen (0-127) werden in UTF-8 mit identischem 1-Byte-Bitmuster kodiert. Bewusstes Design f\u00fcr R\u00fcckw\u00e4rtskompatibilit\u00e4t.", wrong: "Falsch. UTF-8 nutzt 1-4 Bytes. ASCII und UTF-8 wurden nicht von Microsoft entwickelt. UTF-8 konvertiert nichts automatisch." },
+    { correct: "Richtig. ACL (Access Control List) ist eine Liste von Berechtigungseintr\u00e4gen. Feingranularer als das Linux rwx-System.", wrong: "Falsch. ACL ist kein Linux-Befehl, kein Dateisystem und kein Netzwerkprotokoll. Es ist das Windows-Berechtigungskonzept." },
+    { correct: "Richtig. .docx ist intern ein ZIP-Archiv mit XML-Dateien. Umbenennen in .zip und entpacken zeigt die Struktur.", wrong: "Falsch. Die Datei ist nicht besch\u00e4digt. Es ist kein Zufall. ZIP und DOCX sind strukturell dasselbe, aber DOCX enth\u00e4lt spezifische XML-Strukturen." }
+  ]
+};
+
+// Gesamtquiz Auswertung mit Empfehlungen
+const _showResultOrig = showQuizResult;
+window.showQuizResult = function(quizId, total) {
+  const state = quizState[quizId];
+  const score = Object.values(state.answers).filter(Boolean).length;
+  const pct = Math.round((score / total) * 100);
+  document.getElementById('result-score-' + quizId).textContent = score + ' / ' + total;
+  let msg = pct >= 90 ? 'Ausgezeichnet!' : pct >= 75 ? 'Gut. Schau dir die falschen Antworten nochmal an.' : pct >= 50 ? 'Mittelmä\u00dfig. Geh die schwachen Module nochmal durch.' : 'Noch viel Nachholbedarf. Starte am besten bei Modul 1 neu.';
+  document.getElementById('result-msg-' + quizId).textContent = msg;
+
+  if (quizId === 'final') {
+    const moduleMap = {0:'m1',11:'m1',3:'m1',1:'m2',2:'m2',4:'m4',9:'m5',13:'m5',16:'m5',5:'m3',17:'m3',7:'m6',15:'m6',18:'m6',6:'m5',10:'m2',8:'m7',12:'m7',14:'m2',19:'m4'};
+    const weakModules = new Set();
+    Object.entries(state.answers).forEach(([q,correct]) => { if (!correct && moduleMap[parseInt(q)]) weakModules.add(moduleMap[parseInt(q)]); });
+    const names = {m1:'Modul 1 (Bits & Bytes)',m2:'Modul 2 (Dateien)',m3:'Modul 3 (Textdateien)',m4:'Modul 4 (Binärdateien)',m5:'Modul 5 (Formate)',m6:'Modul 6 (Berechtigungen)',m7:'Modul 7 (MIME & Base64)'};
+    const rec = document.getElementById('final-recommendations');
+    if (weakModules.size > 0) {
+      rec.innerHTML = '<div class="info-box yellow"><div class="box-label">Empfehlung</div><p>Schau nochmal in: ' + Array.from(weakModules).map(m => '<strong>' + names[m] + '</strong>').join(', ') + '.</p></div>';
+    }
+  }
+
+  document.getElementById('result-' + quizId).classList.add('show');
+  const scoreEl = document.getElementById('score-' + quizId);
+  if (scoreEl) scoreEl.textContent = score + '/' + total;
+  updateProgress();
+};
+
 
 </script>
 </body>
