@@ -1209,9 +1209,302 @@ stat datei.txt
       </div>
     </div>
   </div>
-  <div class="page" id="page-m3-kodierung"><span class="chapter-tag tag-text">Modul 03</span><h1>ASCII &amp; UTF-8</h1><p class="lead">Folgt im n&auml;chsten Update.</p></div>
-  <div class="page" id="page-m3-zeilenenden"><span class="chapter-tag tag-text">Modul 03</span><h1>CR, LF &amp; CRLF</h1><p class="lead">Folgt im n&auml;chsten Update.</p></div>
-  <div class="page" id="page-m3-quiz"><span class="chapter-tag tag-quiz">Quiz 3</span><h1>Quiz 3</h1><p class="lead">Folgt wenn Modul 3 fertig ist.</p></div>
+  <!-- ══ MODUL 3: ASCII & UTF-8 ══ -->
+  <div class="page" id="page-m3-kodierung">
+    <span class="chapter-tag tag-text">Modul 03 &middot; Textdateien</span>
+    <h1>ASCII &amp; Zeichenkodierung</h1>
+    <p class="lead">Wie wei&szlig; ein Computer welches Zeichen ein Byte darstellt? Durch Kodierungsstandards. Ohne gemeinsamen Standard w&uuml;rde jedes Programm Bytes anders interpretieren.</p>
+
+    <h2>Das Problem</h2>
+    <p>Ein Byte kann 256 verschiedene Werte haben (0&ndash;255). Aber welcher Wert entspricht welchem Buchstaben? Das ist nicht physikalisch vorgegeben, sondern eine Vereinbarung. Verschiedene L&auml;nder und Hersteller haben jahrzehntelang verschiedene Vereinbarungen getroffen, was zu Chaos gef&uuml;hrt hat.</p>
+
+    <h2>ASCII &ndash; American Standard Code for Information Interchange</h2>
+    <p>ASCII (ausgesprochen "Ask-ee") ist der &auml;lteste weit verbreitete Standard (1963). Er definiert 128 Zeichen mit den Werten 0 bis 127 &ndash; also 7 Bit.</p>
+
+    <div class="card-grid">
+      <div class="card-item cyan">
+        <div class="card-label">0 &ndash; 31</div>
+        <h4>Steuerzeichen</h4>
+        <p>Nicht druckbar. Z.B. 0x09 = Tab, 0x0A = Zeilenumbruch (LF), 0x0D = Wagenr&uuml;cklauf (CR).</p>
+      </div>
+      <div class="card-item blue">
+        <div class="card-label">32 &ndash; 64</div>
+        <h4>Sonderzeichen &amp; Zahlen</h4>
+        <p>Leerzeichen (32), !, ", #, $, %, &amp;, Zahlen 0&ndash;9 (48&ndash;57), :, ;, &lt;, =, &gt;, ?, @</p>
+      </div>
+      <div class="card-item green">
+        <div class="card-label">65 &ndash; 90</div>
+        <h4>Gro&szlig;buchstaben A&ndash;Z</h4>
+        <p>A = 65, B = 66, ... Z = 90. Merkhilfe: 0x41 = 65 = 'A'. Hex und Dezimal.</p>
+      </div>
+      <div class="card-item yellow">
+        <div class="card-label">97 &ndash; 122</div>
+        <h4>Kleinbuchstaben a&ndash;z</h4>
+        <p>a = 97, b = 98, ... z = 122. Genau 32 h&ouml;her als die Gro&szlig;buchstaben. Bit 5 macht den Unterschied.</p>
+      </div>
+    </div>
+
+    <div class="code-block"><span class="code-lang">ASCII Beispiele</span>A = <span class="num">65</span>  = <span class="hex">0x41</span> = <span class="bit0">0</span><span class="bit1">1</span><span class="bit0">0</span><span class="bit0">0</span><span class="bit0">0</span><span class="bit0">0</span><span class="bit0">0</span><span class="bit1">1</span>
+a = <span class="num">97</span>  = <span class="hex">0x61</span> = <span class="bit0">0</span><span class="bit1">1</span><span class="bit1">1</span><span class="bit0">0</span><span class="bit0">0</span><span class="bit0">0</span><span class="bit0">0</span><span class="bit1">1</span>  <span class="cm">-- Bit 5 (32) ist gesetzt: 65 + 32 = 97</span>
+0 = <span class="num">48</span>  = <span class="hex">0x30</span>                   <span class="cm">-- Achtung: Zeichen '0' != Zahl 0</span>
+  = <span class="num">32</span>  = <span class="hex">0x20</span>                   <span class="cm">-- Leerzeichen</span></div>
+
+    <div class="info-box yellow">
+      <div class="box-label">Achtung: Zeichen vs. Zahl</div>
+      <p>Das Zeichen <code style="font-family:'DM Mono',monospace">'0'</code> hat den ASCII-Wert 48 (0x30). Die Zahl <code style="font-family:'DM Mono',monospace">0</code> hat den Wert 0. Das sind zwei v&ouml;llig verschiedene Dinge. Ein h&auml;ufiger Fehler beim Programmieren.</p>
+    </div>
+
+    <h2>Das Problem mit ASCII: nur 128 Zeichen</h2>
+    <p>ASCII deckt nur englische Zeichen ab. Kein &Auml;, kein &Ouml;, kein &Uuml;, kein &szlig;, keine chinesischen Schriftzeichen, kein Arabisch. Jahrzehntelang hat jedes Land eigene Erweiterungen auf 256 Zeichen entwickelt (ISO-8859-1 f&uuml;r Westeuropa, Windows-1252 f&uuml;r Windows, etc.). Das f&uuml;hrte zu Kompatibilit&auml;tsproblemen.</p>
+
+    <h2>Unicode &ndash; ein Standard f&uuml;r alle Zeichen</h2>
+    <p>Unicode (1991) definiert einen einheitlichen Zeichensatz f&uuml;r praktisch alle Schriftsysteme der Welt. Aktuell &uuml;ber 140.000 Zeichen. Jedes Zeichen hat einen eindeutigen <strong>Codepoint</strong> (Codepunkt), geschrieben als <code style="font-family:'DM Mono',monospace">U+XXXX</code>.</p>
+
+    <div class="code-block"><span class="code-lang">Unicode Codepoints</span>A       = <span class="hex">U+0041</span>   <span class="cm">-- Lateinisches A (identisch mit ASCII)</span>
+&auml;       = <span class="hex">U+00E4</span>   <span class="cm">-- Deutsches a-Umlaut</span>
+&euro;       = <span class="hex">U+20AC</span>   <span class="cm">-- Euro-Zeichen</span>
+&#x4e2d;       = <span class="hex">U+4E2D</span>   <span class="cm">-- Chinesisches Zeichen f&uuml;r "Mitte"</span>
+&#x1F600;      = <span class="hex">U+1F600</span>  <span class="cm">-- Smiley-Emoji</span></div>
+
+    <h2>UTF-8 &ndash; die effiziente Kodierung von Unicode</h2>
+    <p>Unicode definiert Zeichen, aber nicht wie sie als Bytes gespeichert werden. UTF-8 (Unicode Transformation Format, 8-Bit) ist die mit Abstand verbreitetste Kodierung. &Uuml;ber 98% aller Webseiten nutzen UTF-8.</p>
+
+    <p>UTF-8 ist <strong>variabel lang</strong>: einfache Zeichen brauchen 1 Byte, seltenere brauchen bis zu 4 Bytes.</p>
+
+    <table class="data-table">
+      <thead><tr><th>Zeichen</th><th>Codepoint</th><th>UTF-8 Bytes</th><th>Anzahl Bytes</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td>U+0041</td><td><code style="font-family:'DM Mono',monospace;color:var(--yellow)">41</code></td><td>1</td></tr>
+        <tr><td>&auml;</td><td>U+00E4</td><td><code style="font-family:'DM Mono',monospace;color:var(--yellow)">C3 A4</code></td><td>2</td></tr>
+        <tr><td>&euro;</td><td>U+20AC</td><td><code style="font-family:'DM Mono',monospace;color:var(--yellow)">E2 82 AC</code></td><td>3</td></tr>
+        <tr><td>&#x1F600;</td><td>U+1F600</td><td><code style="font-family:'DM Mono',monospace;color:var(--yellow)">F0 9F 98 80</code></td><td>4</td></tr>
+      </tbody>
+    </table>
+
+    <div class="info-box green">
+      <div class="box-label">R&uuml;ckw&auml;rtskompatibel mit ASCII</div>
+      <p>Alle ASCII-Zeichen (0&ndash;127) werden in UTF-8 mit genau einem Byte dargestellt &ndash; mit identischem Bitmuster. Jede reine ASCII-Datei ist deshalb automatisch g&uuml;ltiges UTF-8. Das ist kein Zufall, sondern bewusstes Design.</p>
+    </div>
+
+    <div class="info-box red">
+      <div class="box-label">UTF-8 vs. UTF-16 vs. UTF-32</div>
+      <p>Es gibt mehrere Unicode-Kodierungen. UTF-16 nutzt mindestens 2 Bytes pro Zeichen (verwendet intern von Windows und Java). UTF-32 immer 4 Bytes pro Zeichen (viel Platz, aber einfach zu verarbeiten). UTF-8 ist f&uuml;r westliche Texte am effizientesten und deshalb im Web Standard.</p>
+    </div>
+
+    <div class="divider"></div>
+    <div style="display:flex;gap:0.75rem">
+      <button class="btn-nav" onclick="showPage('m2-quiz')">&#8592; Zur&uuml;ck</button>
+      <button class="btn-nav primary" onclick="showPage('m3-zeilenenden')">Weiter: CR, LF &amp; CRLF &#8594;</button>
+    </div>
+  </div>
+
+  <!-- ══ MODUL 3: ZEILENENDEN ══ -->
+  <div class="page" id="page-m3-zeilenenden">
+    <span class="chapter-tag tag-text">Modul 03 &middot; Textdateien</span>
+    <h1>CR, LF &amp; CRLF</h1>
+    <p class="lead">Ein unsichtbares Zeichen das regul&auml;r Produktionssysteme lahmlegt: der Zeilenumbruch. Je nach Betriebssystem wird er anders kodiert.</p>
+
+    <h2>Die Schreibmaschinen-Herkunft</h2>
+    <p>Die Begriffe CR und LF kommen aus der Zeit der mechanischen Schreibmaschinen und fr&uuml;hen Fernschreiber (Teletype = Fernschreiber):</p>
+
+    <div class="card-grid">
+      <div class="card-item red">
+        <div class="card-label">CR &ndash; Carriage Return</div>
+        <h4>Wagenr&uuml;cklauf (0x0D)</h4>
+        <p>Bei einer Schreibmaschine hatte der Schreibkopf einen "Wagen" (Carriage = Wagen) der sich nach rechts bewegte. CR bedeutete: Wagen zur&uuml;ck an den linken Rand. Nur horizontale Bewegung, keine neue Zeile.</p>
+      </div>
+      <div class="card-item green">
+        <div class="card-label">LF &ndash; Line Feed</div>
+        <h4>Zeilenvorschub (0x0A)</h4>
+        <p>LF bedeutete: Papier um eine Zeile nach oben schieben (Line Feed = Zeilenvorschub). Nur vertikale Bewegung, kein Zur&uuml;cksetzen an den Anfang.</p>
+      </div>
+    </div>
+
+    <p>F&uuml;r einen vollst&auml;ndigen Zeilenumbruch bei Schreibmaschinen brauchte man also <strong>beide</strong> Aktionen: erst CR (zur&uuml;ck an den Rand), dann LF (eine Zeile runter). Genau das haben die ersten Computer-Systeme &uuml;bernommen.</p>
+
+    <h2>Verschiedene Systeme, verschiedene Standards</h2>
+    <table class="data-table">
+      <thead><tr><th>System</th><th>K&uuml;rzel</th><th>Bytes</th><th>Name</th><th>Hex</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Linux / macOS</strong></td><td>LF</td><td>1 Byte</td><td>Line Feed</td><td><code style="font-family:'DM Mono',monospace;color:var(--green)">0x0A</code></td></tr>
+        <tr><td><strong>Windows</strong></td><td>CRLF</td><td>2 Bytes</td><td>Carriage Return + Line Feed</td><td><code style="font-family:'DM Mono',monospace;color:var(--red)">0x0D 0x0A</code></td></tr>
+        <tr><td><strong>Altes macOS (vor OS X)</strong></td><td>CR</td><td>1 Byte</td><td>Carriage Return</td><td><code style="font-family:'DM Mono',monospace;color:var(--yellow)">0x0D</code></td></tr>
+      </tbody>
+    </table>
+
+    <div class="info-box blue">
+      <div class="box-label">Warum hat Windows CRLF gew&auml;hlt?</div>
+      <p>Die fr&uuml;hen Windows-Systeme basierten auf MS-DOS, das von CP/M beeinflusst wurde. CP/M war f&uuml;r Fernschreiber (Teletype) ausgelegt und &uuml;bernahm die CRLF-Konvention direkt. Linux und Unix entschieden sich f&uuml;r das effizientere LF allein. Diese Entscheidung von ca. 1980 verursacht bis heute Probleme.</p>
+    </div>
+
+    <h2>Wann wird das zum Problem?</h2>
+    <p>Solange du nur auf einem System arbeitest, merkst du nichts. Es wird problematisch wenn Dateien zwischen Systemen ausgetauscht werden:</p>
+
+    <div class="card-grid">
+      <div class="card-item red">
+        <div class="card-label">Shell-Skript Problem</div>
+        <h4>^M am Zeilenende</h4>
+        <p>Ein unter Windows bearbeitetes Shell-Skript (.sh) l&auml;uft unter Linux nicht. Der Interpreter sieht das CR (0x0D) als Teil des Befehls. Im Terminal erscheint <code style="font-family:'DM Mono',monospace">^M</code> am Zeilenende.</p>
+      </div>
+      <div class="card-item yellow">
+        <div class="card-label">Git-Probleme</div>
+        <h4>Riesige Diffs</h4>
+        <p>Git zeigt bei jeder Zeile eine &Auml;nderung an obwohl nur Zeilenenden konvertiert wurden. L&ouml;sung: <code style="font-family:'DM Mono',monospace">.gitattributes</code> Datei.</p>
+      </div>
+    </div>
+
+    <h2>N&uuml;tzliche Linux-Befehle</h2>
+    <div class="info-box cyan">
+      <div class="box-label">Linux-Befehle</div>
+      <p>Diese Befehle funktionieren in Linux- und macOS-Terminals. Unter Windows ben&ouml;tigst du WSL (Windows Subsystem for Linux) oder Git Bash.</p>
+    </div>
+    <div class="code-block"><span class="code-lang">Linux / macOS Terminal</span><span class="cm"># Zeilenenden pr&uuml;fen: ^M sichtbar machen</span>
+cat -A datei.txt
+<span class="cm"># Windows-Zeilenenden erscheinen als ^M$ am Zeilenende</span>
+<span class="cm"># Linux-Zeilenenden erscheinen als $ am Zeilenende</span>
+
+<span class="cm"># CRLF nach LF konvertieren (Windows zu Linux)</span>
+sed -i 's/
+//' datei.txt
+<span class="cm"># 
+ ist das Steuerzeichen f&uuml;r CR (0x0D)</span>
+
+<span class="cm"># Encoding einer Datei erkennen</span>
+file -i datei.txt
+
+<span class="cm"># Dateityp &uuml;ber Magic Bytes erkennen (unabh&auml;ngig von Endung)</span>
+file datei.xyz</div>
+
+    <h2>Interaktiv: CRLF-Visualizer</h2>
+    <div class="tool-box">
+      <div class="tool-label">&#9654; Zeilenenden sichtbar machen</div>
+      <div class="tool-input-row">
+        <input type="text" class="tool-input" id="crlf-input" value="Zeile 1&#10;Zeile 2&#10;Zeile 3"
+               placeholder="Text mit Zeilenumbrüchen..." oninput="updateCRLF()" style="max-width:320px">
+      </div>
+      <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
+        <div style="flex:1;min-width:200px">
+          <div style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--green);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem">Linux (LF)</div>
+          <div class="crlf-display" id="crlf-linux"></div>
+        </div>
+        <div style="flex:1;min-width:200px">
+          <div style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--red);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem">Windows (CRLF)</div>
+          <div class="crlf-display" id="crlf-windows"></div>
+        </div>
+      </div>
+      <div class="crlf-legend">
+        <div class="crlf-legend-item"><span class="crlf-char crlf-lf" style="padding:1px 5px">LF</span> Line Feed (0x0A) &ndash; Linux Zeilenumbruch</div>
+        <div class="crlf-legend-item"><span class="crlf-char crlf-cr" style="padding:1px 5px">CR</span> Carriage Return (0x0D) &ndash; Windows zus&auml;tzlich</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div style="display:flex;gap:0.75rem">
+      <button class="btn-nav" onclick="showPage('m3-kodierung')">&#8592; Zur&uuml;ck</button>
+      <button class="btn-nav primary" onclick="showPage('m3-quiz')">Weiter: Quiz 3 &#8594;</button>
+    </div>
+  </div>
+
+  <!-- ══ MODUL 3: QUIZ ══ -->
+  <div class="page" id="page-m3-quiz">
+    <span class="chapter-tag tag-quiz">Modul 03 &middot; Quiz</span>
+    <h1>Quiz 3: Textdateien &amp; Kodierung</h1>
+    <p class="lead">7 Fragen zu ASCII, UTF-8 und Zeilenenden.</p>
+    <div class="quiz-container" id="quiz-m3">
+
+      <div class="quiz-question" data-q="0">
+        <div class="question-num">Frage 1 von 7</div>
+        <div class="question-text">Wie viele Zeichen definiert der urspr&uuml;ngliche ASCII-Standard?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m3',0,'A')"><span class="option-letter">A</span> 256</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',0,'B')"><span class="option-letter">B</span> 128</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',0,'C')"><span class="option-letter">C</span> 512</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',0,'D')"><span class="option-letter">D</span> 65536</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m3-0"></div>
+      </div>
+
+      <div class="quiz-question" data-q="1">
+        <div class="question-num">Frage 2 von 7</div>
+        <div class="question-text">Welchen ASCII-Dezimalwert hat der Gro&szlig;buchstabe 'A'?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m3',1,'A')"><span class="option-letter">A</span> 1</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',1,'B')"><span class="option-letter">B</span> 97</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',1,'C')"><span class="option-letter">C</span> 65</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',1,'D')"><span class="option-letter">D</span> 48</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m3-1"></div>
+      </div>
+
+      <div class="quiz-question" data-q="2">
+        <div class="question-num">Frage 3 von 7</div>
+        <div class="question-text">Warum ist UTF-8 r&uuml;ckw&auml;rtskompatibel mit ASCII?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m3',2,'A')"><span class="option-letter">A</span> Weil UTF-8 nur 7 Bit pro Zeichen nutzt</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',2,'B')"><span class="option-letter">B</span> Weil ASCII und UTF-8 von derselben Organisation entwickelt wurden</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',2,'C')"><span class="option-letter">C</span> Weil alle ASCII-Zeichen (0&ndash;127) in UTF-8 mit identischem 1-Byte-Bitmuster kodiert werden</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',2,'D')"><span class="option-letter">D</span> Weil UTF-8 alle ASCII-Dateien automatisch konvertiert</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m3-2"></div>
+      </div>
+
+      <div class="quiz-question" data-q="3">
+        <div class="question-num">Frage 4 von 7</div>
+        <div class="question-text">Wie viele Bytes ben&ouml;tigt das Euro-Zeichen (&euro;, U+20AC) in UTF-8?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m3',3,'A')"><span class="option-letter">A</span> 1 Byte</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',3,'B')"><span class="option-letter">B</span> 2 Bytes</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',3,'C')"><span class="option-letter">C</span> 3 Bytes</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',3,'D')"><span class="option-letter">D</span> 4 Bytes</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m3-3"></div>
+      </div>
+
+      <div class="quiz-question" data-q="4">
+        <div class="question-num">Frage 5 von 7</div>
+        <div class="question-text">Was bedeutet CR in "CRLF"?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m3',4,'A')"><span class="option-letter">A</span> Character Return &ndash; setzt den Cursor ans Zeilenende</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',4,'B')"><span class="option-letter">B</span> Carriage Return &ndash; Wagenr&uuml;cklauf, setzt den Cursor an den Zeilenanfang</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',4,'C')"><span class="option-letter">C</span> Code Reset &ndash; setzt die Zeichenkodierung zur&uuml;ck</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',4,'D')"><span class="option-letter">D</span> Cursor Right &ndash; bewegt den Cursor nach rechts</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m3-4"></div>
+      </div>
+
+      <div class="quiz-question" data-q="5">
+        <div class="question-num">Frage 6 von 7</div>
+        <div class="question-text">Ein Shell-Skript wurde unter Windows erstellt und l&auml;uft unter Linux nicht. Du siehst <code style="font-family:'DM Mono',monospace">^M</code> am Zeilenende. Was ist das wahrscheinlichste Problem?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m3',5,'A')"><span class="option-letter">A</span> Das Skript hat Syntaxfehler im Bash-Code</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',5,'B')"><span class="option-letter">B</span> Windows-Zeilenenden (CRLF) statt Linux-Zeilenenden (LF) &ndash; das CR wird als Teil des Befehls interpretiert</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',5,'C')"><span class="option-letter">C</span> Die Datei ist in UTF-16 statt UTF-8 kodiert</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',5,'D')"><span class="option-letter">D</span> Linux unterst&uuml;tzt keine .sh-Dateien die unter Windows erstellt wurden</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m3-5"></div>
+      </div>
+
+      <div class="quiz-question" data-q="6">
+        <div class="question-num">Frage 7 von 7</div>
+        <div class="question-text">Mit welchem Linux-Befehl kannst du CRLF-Zeilenenden in LF umwandeln?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m3',6,'A')"><span class="option-letter">A</span> <code style="font-family:'DM Mono',monospace">convert --crlf datei.txt</code></button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',6,'B')"><span class="option-letter">B</span> <code style="font-family:'DM Mono',monospace">fix -lf datei.txt</code></button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',6,'C')"><span class="option-letter">C</span> <code style="font-family:'DM Mono',monospace">sed -i 's/\r//' datei.txt</code></button>
+          <button class="quiz-option" onclick="selectOpt(this,'m3',6,'D')"><span class="option-letter">D</span> <code style="font-family:'DM Mono',monospace">rm -cr datei.txt</code></button>
+        </div>
+        <div class="quiz-feedback" id="fb-m3-6"></div>
+      </div>
+
+      <div class="quiz-result" id="result-m3">
+        <div class="result-score" id="result-score-m3"></div>
+        <div class="result-label">Punkte erreicht</div>
+        <div class="result-msg" id="result-msg-m3"></div>
+        <button class="reset-btn" onclick="resetQuiz('m3')">Quiz zur&uuml;cksetzen</button>
+        <button class="btn-nav primary" style="margin-left:0.65rem" onclick="showPage('m4-binaer')">Weiter zu Modul 4 &#8594;</button>
+      </div>
+    </div>
+  </div>
   <div class="page" id="page-m4-binaer"><span class="chapter-tag tag-bin">Modul 04</span><h1>Bin&auml;rdateien &amp; Magic Bytes</h1><p class="lead">Folgt im n&auml;chsten Update.</p></div>
   <div class="page" id="page-m4-hex"><span class="chapter-tag tag-bin">Modul 04</span><h1>Hex-Viewer &amp; Rater</h1><p class="lead">Folgt im n&auml;chsten Update.</p></div>
   <div class="page" id="page-m4-quiz"><span class="chapter-tag tag-quiz">Quiz 4</span><h1>Quiz 4</h1><p class="lead">Folgt wenn Modul 4 fertig ist.</p></div>
@@ -1460,6 +1753,54 @@ QUIZ_DATA.m2 = {
       wrong: 'Falsch. Journaling-Overhead ist zus\u00e4tzlicher Platz f\u00fcr das Journal. Inode-Reserve ist reservierter Platz f\u00fcr Metadaten. Fragmentierung ist die Aufteilung einer Datei auf nicht zusammenh\u00e4ngende Cluster. Den verschwendeten Platz nennt man Slack Space.' }
   ]
 };
+
+
+QUIZ_DATA.m3 = {
+  correct: ['B','C','C','C','B','B','C'],
+  feedback: [
+    { correct: "Richtig. ASCII definiert 128 Zeichen mit den Werten 0 bis 127. Das sind 7 Bit (2 hoch 7 = 128).",
+      wrong: "Falsch. Der urspr\u00fcngliche ASCII-Standard definiert genau 128 Zeichen (0\u2013127), also 7 Bit. 256 w\u00e4ren 8 Bit." },
+    { correct: "Richtig. A = 65 = 0x41. Kleinbuchstabe a = 97 = 65 + 32.",
+      wrong: "Falsch. A hat den Wert 65 (0x41). 97 ist der Kleinbuchstabe a. 48 ist das Zeichen 0 (Ziffer null als Zeichen). 1 ist ein Steuerzeichen." },
+    { correct: "Richtig. UTF-8 war so designed dass alle ASCII-Zeichen (0\u2013127) mit einem einzigen Byte im identischen Bitmuster kodiert werden.",
+      wrong: "Falsch. UTF-8 nutzt 1 bis 4 Bytes, nicht immer 7 Bit. Der Grund ist bewusstes Design: identische Bitmuster f\u00fcr 0\u2013127." },
+    { correct: "Richtig. Das Euro-Zeichen hat den Codepoint U+20AC. Da dieser Wert au\u00dferhalb des 2-Byte-Bereichs liegt, braucht er 3 Bytes: E2 82 AC.",
+      wrong: "Falsch. Das Euro-Zeichen (U+20AC) ben\u00f6tigt 3 Bytes in UTF-8. 1 Byte reicht nur f\u00fcr ASCII (0\u2013127). 4 Bytes f\u00fcr Emojis ab U+10000." },
+    { correct: "Richtig. CR steht f\u00fcr Carriage Return (Wagenr\u00fccklauf) \u2013 ein Begriff aus der Schreibmaschinen\u00e4ra.",
+      wrong: "Falsch. CR bedeutet Carriage Return (Wagenr\u00fccklauf), nicht Character Return, Code Reset oder Cursor Right." },
+    { correct: "Richtig. Das sichtbare ^M ist die Terminal-Darstellung von CR (0x0D). Der Linux-Interpreter interpretiert das CR als Teil des Befehls.",
+      wrong: "Falsch. Syntaxfehler w\u00fcrden anders aussehen. ^M zeigt eindeutig ein CR-Zeichen (Windows-Zeilenende) an." },
+    { correct: "Richtig. sed -i mit dem Muster s/\\r// entfernt alle CR-Zeichen (0x0D) aus der Datei. Das -i Flag \u00e4ndert die Datei direkt.",
+      wrong: "Falsch. convert --crlf und fix -lf sind keine Linux-Standardbefehle. rm -cr w\u00fcrde die Datei l\u00f6schen. Korrekt ist sed -i mit dem Muster s/\\r//." }
+  ]
+};
+
+// CRLF VISUALIZER
+function updateCRLF() {
+  const val = document.getElementById('crlf-input').value;
+  const linuxEl = document.getElementById('crlf-linux');
+  const windowsEl = document.getElementById('crlf-windows');
+  if (!linuxEl || !windowsEl) return;
+
+  function renderLine(text, useCR) {
+    let html = '';
+    for (const ch of text) {
+      if (ch === '\n') {
+        if (useCR) html += '<span class="crlf-char crlf-cr">CR</span>';
+        html += '<span class="crlf-char crlf-lf">LF</span><br>';
+      } else {
+        html += '<span class="crlf-char crlf-normal">' + ch.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</span>';
+      }
+    }
+    return html;
+  }
+
+  linuxEl.innerHTML = renderLine(val, false);
+  windowsEl.innerHTML = renderLine(val, true);
+}
+
+// CRLF init nach kurzer Verzögerung
+setTimeout(updateCRLF, 100);
 
 </script>
 </body>
