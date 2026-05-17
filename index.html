@@ -1379,8 +1379,11 @@ file datei.xyz</div>
     <div class="tool-box">
       <div class="tool-label">&#9654; Zeilenenden sichtbar machen</div>
       <div class="tool-input-row">
-        <input type="text" class="tool-input" id="crlf-input" value="Zeile 1&#10;Zeile 2&#10;Zeile 3"
-               placeholder="Text mit Zeilenumbrüchen..." oninput="updateCRLF()" style="max-width:320px">
+        <textarea class="tool-input" id="crlf-input" rows="3"
+               placeholder="Text mit Zeilenumbrüchen eingeben..." oninput="updateCRLF()"
+               style="max-width:320px;resize:vertical">Zeile 1
+Zeile 2
+Zeile 3</textarea>
       </div>
       <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
         <div style="flex:1;min-width:200px">
@@ -2715,29 +2718,39 @@ QUIZ_DATA.m3 = {
 
 // CRLF VISUALIZER
 function updateCRLF() {
-  const val = document.getElementById('crlf-input').value;
+  const el = document.getElementById('crlf-input');
+  if (!el) return;
+  const val = el.value;
   const linuxEl = document.getElementById('crlf-linux');
   const windowsEl = document.getElementById('crlf-windows');
   if (!linuxEl || !windowsEl) return;
 
-  function renderLine(text, useCR) {
-    let html = '';
-    for (const ch of text) {
-      if (ch === '\n') {
-        if (useCR) html += '<span class="crlf-char crlf-cr">CR</span>';
-        html += '<span class="crlf-char crlf-lf">LF</span><br>';
-      } else {
-        html += '<span class="crlf-char crlf-normal">' + ch.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</span>';
+  function renderLines(text, useCR) {
+    const lines = text.split('\n');
+    return lines.map((line, i) => {
+      const isLast = i === lines.length - 1;
+      let html = '<div class="crlf-row">';
+      // Zeichen der Zeile
+      for (const ch of line) {
+        html += '<span class="crlf-char crlf-normal">' + ch.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/ /g,'&middot;') + '</span>';
       }
-    }
-    return html;
+      // Zeilenende-Marker (nicht für letzte Zeile wenn leer)
+      if (!isLast || line.length > 0) {
+        if (!isLast) {
+          if (useCR) html += '<span class="crlf-char crlf-cr" title="0x0D">CR</span>';
+          html += '<span class="crlf-char crlf-lf" title="0x0A">LF</span>';
+        }
+      }
+      html += '</div>';
+      return html;
+    }).join('');
   }
 
-  linuxEl.innerHTML = renderLine(val, false);
-  windowsEl.innerHTML = renderLine(val, true);
+  linuxEl.innerHTML = renderLines(val, false);
+  windowsEl.innerHTML = renderLines(val, true);
 }
 
-// CRLF init nach kurzer Verzögerung
+// CRLF init
 setTimeout(updateCRLF, 100);
 
 
