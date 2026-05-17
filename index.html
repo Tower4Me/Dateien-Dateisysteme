@@ -917,9 +917,298 @@ Wert:    128 +  0 + 32 + 16 +  0 +  0 +  2 +  0  =  <span class="num">178</span>
   </div>
 
   <!-- PLATZHALTER Module 2-7 + Final -->
-  <div class="page" id="page-m2-datei"><span class="chapter-tag tag-file">Modul 02</span><h1>Dateien &amp; Metadaten</h1><p class="lead">Folgt im n&auml;chsten Update.</p></div>
-  <div class="page" id="page-m2-dateisysteme"><span class="chapter-tag tag-file">Modul 02</span><h1>Dateisysteme</h1><p class="lead">Folgt im n&auml;chsten Update.</p></div>
-  <div class="page" id="page-m2-quiz"><span class="chapter-tag tag-quiz">Quiz 2</span><h1>Quiz 2</h1><p class="lead">Folgt wenn Modul 2 fertig ist.</p></div>
+  <!-- ══ MODUL 2: DATEIEN & METADATEN ══ -->
+  <div class="page" id="page-m2-datei">
+    <span class="chapter-tag tag-file">Modul 02 &middot; Was ist eine Datei?</span>
+    <h1>Dateien &amp; Metadaten</h1>
+    <p class="lead">Eine Datei ist eine benannte, geordnete Folge von Bytes, dauerhaft auf einem Speichermedium abgelegt. Das klingt simpel &ndash; aber dahinter steckt ein ganzes System.</p>
+
+    <h2>Was ist eine Datei?</h2>
+    <p>Auf dem untersten Level ist eine Datei nichts anderes als eine Sequenz von Bytes auf einem Speichermedium. Das Betriebssystem (Operating System = OS) wei&szlig; nicht was in der Datei steckt. Es verwaltet nur wo sie liegt und wie sie hei&szlig;t. Den Inhalt interpretiert immer das &ouml;ffnende Programm.</p>
+
+    <div class="info-box cyan">
+      <div class="box-label">Wichtig</div>
+      <p>Die Dateiendung (z.B. <code style="font-family:'DM Mono',monospace">.jpg</code>) ist nur ein Hinweis f&uuml;r das Betriebssystem welches Programm die Datei &ouml;ffnen soll. Sie kann umbenannt werden ohne den Inhalt zu ver&auml;ndern. Der echte Dateityp steckt in den ersten Bytes der Datei selbst (dazu mehr in Modul 4).</p>
+    </div>
+
+    <h2>Metadaten</h2>
+    <p><strong>Metadaten</strong> (Meta = &uuml;ber, Daten = Informationen) sind Daten &uuml;ber eine Datei, nicht der Inhalt selbst. Das Dateisystem speichert sie getrennt vom eigentlichen Dateiinhalt.</p>
+
+    <div class="card-grid">
+      <div class="card-item cyan">
+        <div class="card-label">Name</div>
+        <h4>Dateiname + Endung</h4>
+        <p>Der menschenlesbare Name. Wird vom Dateisystem gespeichert, nicht in der Datei selbst.</p>
+      </div>
+      <div class="card-item blue">
+        <div class="card-label">Gr&ouml;&szlig;e</div>
+        <h4>Dateigr&ouml;&szlig;e in Bytes</h4>
+        <p>Wie viele Bytes der Inhalt hat. Unterschied zur "Gr&ouml;&szlig;e auf Datentr&auml;ger" (immer ein Vielfaches der Clustergr&ouml;&szlig;e).</p>
+      </div>
+      <div class="card-item green">
+        <div class="card-label">Zeitstempel</div>
+        <h4>Erstellt / Ge&auml;ndert / Ge&ouml;ffnet</h4>
+        <p>Drei verschiedene Zeitstempel: Erstellung, letzte &Auml;nderung, letzter Zugriff. Forensisch relevant.</p>
+      </div>
+      <div class="card-item yellow">
+        <div class="card-label">Berechtigungen</div>
+        <h4>Wer darf was</h4>
+        <p>Lesen, Schreiben, Ausf&uuml;hren. Unter Linux rwx, unter Windows ACL (Access Control List). Mehr dazu in Modul 6.</p>
+      </div>
+      <div class="card-item purple">
+        <div class="card-label">Speicherort</div>
+        <h4>Inode / MFT-Eintrag</h4>
+        <p>Zeiger auf die tats&auml;chlichen Datenbl&ouml;cke auf dem Datentr&auml;ger. Der "Inhaltsverzeichnis-Eintrag" der Datei.</p>
+      </div>
+      <div class="card-item red">
+        <div class="card-label">Attribute</div>
+        <h4>Versteckt, System, Archiv</h4>
+        <p>Zus&auml;tzliche Flags. Z.B. "versteckt" unter Windows, "system" f&uuml;r Betriebssystemdateien.</p>
+      </div>
+    </div>
+
+    <h2>Inode &ndash; der interne Datei-Eintrag (Linux)</h2>
+    <p>Unter Linux verwaltet das Dateisystem jede Datei &uuml;ber einen <strong>Inode</strong> (Index Node = Index-Knoten). Der Inode enth&auml;lt alle Metadaten au&szlig;er dem Dateinamen. Der Dateiname ist nur ein Verweis auf den Inode.</p>
+
+    <div class="code-block"><span class="code-lang">Linux Terminal</span><span class="cm"># Inode-Nummer einer Datei anzeigen</span>
+ls -i datei.txt
+<span class="cm"># Ausgabe: 1234567 datei.txt</span>
+
+<span class="cm"># Alle Metadaten einer Datei anzeigen</span>
+stat datei.txt
+<span class="cm"># Zeigt: Gr&ouml;&szlig;e, Bl&ouml;cke, Zugriffsrechte, Inode, Zeitstempel</span></div>
+
+    <div class="info-box yellow">
+      <div class="box-label">Warum ist das relevant?</div>
+      <p>Wenn du eine Datei "l&ouml;schst", wird meist nur der Inode-Eintrag als frei markiert. Die eigentlichen Daten bleiben auf dem Datentr&auml;ger bis sie &uuml;berschrieben werden. Das ist der Grund warum gel&ouml;schte Dateien mit Forensik-Tools wiederhergestellt werden k&ouml;nnen.</p>
+    </div>
+
+    <h2>MFT &ndash; Master File Table (Windows/NTFS)</h2>
+    <p>Windows NTFS (New Technology File System) nutzt statt Inodes die <strong>MFT (Master File Table = Haupt-Dateitabelle)</strong>. Jede Datei hat einen MFT-Eintrag mit allen Metadaten. Bei kleinen Dateien (&lt; ~700 Byte) wird der Inhalt direkt im MFT-Eintrag gespeichert.</p>
+
+    <div class="info-box blue">
+      <div class="box-label">Gr&ouml;&szlig;e vs. Gr&ouml;&szlig;e auf Datentr&auml;ger</div>
+      <p>Windows zeigt zwei Gr&ouml;&szlig;en: "Gr&ouml;&szlig;e" ist die tats&auml;chliche Dateigr&ouml;&szlig;e in Bytes. "Gr&ouml;&szlig;e auf Datentr&auml;ger" ist immer ein Vielfaches der Clustergr&ouml;&szlig;e (z.B. 4 KB). Eine 1-Byte-Datei belegt trotzdem 4 KB auf der Festplatte. Der Rest ist verschwendeter Platz (Slack Space = Leerraum).</p>
+    </div>
+
+    <div class="divider"></div>
+    <div style="display:flex;gap:0.75rem">
+      <button class="btn-nav" onclick="showPage('m1-quiz')">&#8592; Zur&uuml;ck</button>
+      <button class="btn-nav primary" onclick="showPage('m2-dateisysteme')">Weiter: Dateisysteme &#8594;</button>
+    </div>
+  </div>
+
+  <!-- ══ MODUL 2: DATEISYSTEME ══ -->
+  <div class="page" id="page-m2-dateisysteme">
+    <span class="chapter-tag tag-file">Modul 02 &middot; Was ist eine Datei?</span>
+    <h1>Dateisysteme</h1>
+    <p class="lead">Ein Dateisystem ist die Struktur die ein Betriebssystem nutzt um Daten auf einem Speichermedium zu organisieren. Ohne Dateisystem w&auml;re eine Festplatte nur ein riesiger Haufen Bytes ohne Anfang und Ende.</p>
+
+    <h2>Was macht ein Dateisystem?</h2>
+    <p>Ein Dateisystem l&ouml;st vier Grundprobleme:</p>
+    <div class="card-grid">
+      <div class="card-item cyan"><div class="card-label">Organisation</div><h4>Ordner &amp; Dateien</h4><p>Hierarchische Struktur aus Verzeichnissen und Dateien. Wo f&auml;ngt was an, wo h&ouml;rt es auf.</p></div>
+      <div class="card-item blue"><div class="card-label">Adressierung</div><h4>Wo liegt was</h4><p>Welche Bl&ouml;cke auf dem Datentr&auml;ger geh&ouml;ren zu welcher Datei. Zuordnung von Namen zu Speicherorten.</p></div>
+      <div class="card-item green"><div class="card-label">Freispeicher</div><h4>Was ist noch frei</h4><p>Verwaltung welche Bl&ouml;cke belegt und welche frei sind. Ohne das k&ouml;nnte man nichts schreiben.</p></div>
+      <div class="card-item yellow"><div class="card-label">Metadaten</div><h4>Infos &uuml;ber Dateien</h4><p>Name, Gr&ouml;&szlig;e, Zeitstempel, Berechtigungen &ndash; alles was nicht der Dateiinhalt selbst ist.</p></div>
+    </div>
+
+    <h2>Die wichtigsten Dateisysteme</h2>
+
+    <h3>NTFS &ndash; New Technology File System</h3>
+    <p>Das Standard-Dateisystem von Windows seit Windows NT (1993). Heute auf praktisch allen Windows-Systemen.</p>
+    <div class="card-grid">
+      <div class="compare-col good" style="border-radius:9px;padding:1.15rem">
+        <div class="col-header">St&auml;rken</div>
+        <ul>
+          <li>Dateigr&ouml;&szlig;en bis 16 EB (Exabyte) theoretisch</li>
+          <li>Journaling (Fehlertoleranz bei Stromausfall)</li>
+          <li>Zugriffsrechte (ACL = Access Control List)</li>
+          <li>Verschl&uuml;sselung (EFS = Encrypting File System)</li>
+          <li>Komprimierung einzelner Dateien</li>
+        </ul>
+      </div>
+      <div class="compare-col bad" style="border-radius:9px;padding:1.15rem">
+        <div class="col-header">Schw&auml;chen</div>
+        <ul>
+          <li>Nur von Linux mit zus&auml;tzlichem Treiber beschreibbar</li>
+          <li>macOS kann nur lesen, nicht schreiben</li>
+          <li>F&uuml;r USB-Sticks &uuml;berdimensioniert</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>FAT32 &ndash; File Allocation Table 32</h3>
+    <p>Ein altes aber universelles Dateisystem (1996). Wird heute vor allem f&uuml;r USB-Sticks und SD-Karten genutzt wegen maximaler Kompatibilit&auml;t.</p>
+    <div class="info-box red">
+      <div class="box-label">Kritische Einschr&auml;nkung</div>
+      <p>FAT32 unterst&uuml;tzt keine einzelne Datei gr&ouml;&szlig;er als <strong>4 GB</strong> (genau: 4 GB minus 1 Byte). Das ist ein hartes Limit im Dateisystemdesign. Ein 8 GB gro&szlig;es Video passt deshalb nicht auf einen FAT32-formatierten USB-Stick.</p>
+    </div>
+    <div class="card-grid">
+      <div class="compare-col good" style="border-radius:9px;padding:1.15rem">
+        <div class="col-header">St&auml;rken</div>
+        <ul>
+          <li>Von Windows, Linux, macOS, Kameras, Radios lesbar</li>
+          <li>Einfach und robust</li>
+          <li>Geringe Overhead-Gr&ouml;&szlig;e</li>
+        </ul>
+      </div>
+      <div class="compare-col bad" style="border-radius:9px;padding:1.15rem">
+        <div class="col-header">Schw&auml;chen</div>
+        <ul>
+          <li>Max. 4 GB pro Datei</li>
+          <li>Max. 32 GB Partitionsgr&ouml;&szlig;e (Windows-Formatierung)</li>
+          <li>Kein Journaling, keine Berechtigungen</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>exFAT &ndash; Extended File Allocation Table</h3>
+    <p>Microsofts Nachfolger f&uuml;r FAT32 (2006). Keine 4-GB-Grenze mehr, trotzdem breit kompatibel. Heute Standard f&uuml;r gro&szlig;e SD-Karten (SDXC).</p>
+
+    <h3>ext4 &ndash; Fourth Extended Filesystem</h3>
+    <p>Das Standard-Dateisystem von Linux seit 2008. Robust, schnell, mit Journaling.</p>
+    <div class="card-grid">
+      <div class="compare-col good" style="border-radius:9px;padding:1.15rem">
+        <div class="col-header">St&auml;rken</div>
+        <ul>
+          <li>Sehr zuverl&auml;ssig und erprobt</li>
+          <li>Journaling, gro&szlig;e Dateien, gro&szlig;e Partitionen</li>
+          <li>Standardm&auml;&szlig;ig auf fast allen Linux-Systemen</li>
+        </ul>
+      </div>
+      <div class="compare-col bad" style="border-radius:9px;padding:1.15rem">
+        <div class="col-header">Schw&auml;chen</div>
+        <ul>
+          <li>Windows kann ext4 nicht lesen (ohne Drittanbieter-Software)</li>
+          <li>macOS auch nicht nativ</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>Vergleich auf einen Blick</h2>
+    <table class="data-table">
+      <thead><tr><th>Dateisystem</th><th>OS</th><th>Max. Dateigr&ouml;&szlig;e</th><th>Journaling</th><th>Berechtigungen</th><th>Einsatz</th></tr></thead>
+      <tbody>
+        <tr><td><strong>NTFS</strong></td><td>Windows</td><td>~16 EB</td><td>Ja</td><td>ACL</td><td>Windows-Systemlaufwerke</td></tr>
+        <tr><td><strong>FAT32</strong></td><td>Alle</td><td>4 GB</td><td>Nein</td><td>Nein</td><td>USB-Sticks, Kompatibilit&auml;t</td></tr>
+        <tr><td><strong>exFAT</strong></td><td>Win/Mac/Linux</td><td>~16 EB</td><td>Nein</td><td>Nein</td><td>Gro&szlig;e SD-Karten, USB</td></tr>
+        <tr><td><strong>ext4</strong></td><td>Linux</td><td>16 TB</td><td>Ja</td><td>rwx</td><td>Linux-Systemlaufwerke</td></tr>
+      </tbody>
+    </table>
+
+    <div class="info-box green">
+      <div class="box-label">Was ist Journaling?</div>
+      <p>Journaling (Journal = Tagebuch) bedeutet: bevor das Dateisystem eine &Auml;nderung vornimmt, schreibt es sie zuerst in ein Journal. Wenn der Strom w&auml;hrend einer Schreiboperation ausf&auml;llt, kann das Dateisystem beim n&auml;chsten Start das Journal durchgehen und unvollst&auml;ndige Operationen r&uuml;ckg&auml;ngig machen. Ohne Journaling k&ouml;nnen Dateien nach einem Absturz korrumpiert sein.</p>
+    </div>
+
+    <div class="divider"></div>
+    <div style="display:flex;gap:0.75rem">
+      <button class="btn-nav" onclick="showPage('m2-datei')">&#8592; Zur&uuml;ck</button>
+      <button class="btn-nav primary" onclick="showPage('m2-quiz')">Weiter: Quiz 2 &#8594;</button>
+    </div>
+  </div>
+
+  <!-- ══ MODUL 2: QUIZ ══ -->
+  <div class="page" id="page-m2-quiz">
+    <span class="chapter-tag tag-quiz">Modul 02 &middot; Quiz</span>
+    <h1>Quiz 2: Dateien &amp; Dateisysteme</h1>
+    <p class="lead">7 Fragen. Lies jede genau.</p>
+    <div class="quiz-container" id="quiz-m2">
+
+      <div class="quiz-question" data-q="0">
+        <div class="question-num">Frage 1 von 7</div>
+        <div class="question-text">Was sind Metadaten einer Datei?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m2',0,'A')"><span class="option-letter">A</span> Der Inhalt der Datei, z.B. der Text in einem Dokument</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',0,'B')"><span class="option-letter">B</span> Informationen &uuml;ber die Datei wie Name, Gr&ouml;&szlig;e, Zeitstempel und Berechtigungen</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',0,'C')"><span class="option-letter">C</span> Eine verschl&uuml;sselte Kopie der Datei</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',0,'D')"><span class="option-letter">D</span> Die Dateiendung</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m2-0"></div>
+      </div>
+
+      <div class="quiz-question" data-q="1">
+        <div class="question-num">Frage 2 von 7</div>
+        <div class="question-text">Du hast eine Datei namens <code style="font-family:'DM Mono',monospace">bild.jpg</code> und benennst sie in <code style="font-family:'DM Mono',monospace">bild.txt</code> um. Was passiert mit dem Inhalt?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m2',1,'A')"><span class="option-letter">A</span> Der Inhalt wird automatisch in Text umgewandelt</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',1,'B')"><span class="option-letter">B</span> Die Datei wird besch&auml;digt</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',1,'C')"><span class="option-letter">C</span> Der Inhalt bleibt unver&auml;ndert, nur der Hinweis f&uuml;r das OS &auml;ndert sich</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',1,'D')"><span class="option-letter">D</span> Das Betriebssystem verhindert die Umbenennung</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m2-1"></div>
+      </div>
+
+      <div class="quiz-question" data-q="2">
+        <div class="question-num">Frage 3 von 7</div>
+        <div class="question-text">Welches Dateisystem hat eine maximale Dateigr&ouml;&szlig;e von 4 GB?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m2',2,'A')"><span class="option-letter">A</span> NTFS</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',2,'B')"><span class="option-letter">B</span> ext4</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',2,'C')"><span class="option-letter">C</span> exFAT</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',2,'D')"><span class="option-letter">D</span> FAT32</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m2-2"></div>
+      </div>
+
+      <div class="quiz-question" data-q="3">
+        <div class="question-num">Frage 4 von 7</div>
+        <div class="question-text">Was ist Journaling in einem Dateisystem?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m2',3,'A')"><span class="option-letter">A</span> Eine Methode um Dateien zu komprimieren</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',3,'B')"><span class="option-letter">B</span> Ein Protokoll das &Auml;nderungen vor der Ausf&uuml;hrung aufzeichnet damit nach einem Absturz der konsistente Zustand wiederhergestellt werden kann</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',3,'C')"><span class="option-letter">C</span> Eine Art Backup das automatisch erstellt wird</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',3,'D')"><span class="option-letter">D</span> Die Verschl&uuml;sselung von Metadaten</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m2-3"></div>
+      </div>
+
+      <div class="quiz-question" data-q="4">
+        <div class="question-num">Frage 5 von 7</div>
+        <div class="question-text">Du willst einen USB-Stick formatieren der sowohl unter Windows als auch macOS beschreibbar sein soll und Dateien &uuml;ber 4 GB speichern k&ouml;nnen soll. Welches Dateisystem ist geeignet?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m2',4,'A')"><span class="option-letter">A</span> FAT32</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',4,'B')"><span class="option-letter">B</span> NTFS</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',4,'C')"><span class="option-letter">C</span> exFAT</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',4,'D')"><span class="option-letter">D</span> ext4</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m2-4"></div>
+      </div>
+
+      <div class="quiz-question" data-q="5">
+        <div class="question-num">Frage 6 von 7</div>
+        <div class="question-text">Warum k&ouml;nnen gel&ouml;schte Dateien oft wiederhergestellt werden?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m2',5,'A')"><span class="option-letter">A</span> Windows erstellt automatisch eine Sicherungskopie</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',5,'B')"><span class="option-letter">B</span> Beim L&ouml;schen wird nur der Inode/MFT-Eintrag als frei markiert, die eigentlichen Dateidaten bleiben bis zum &Uuml;berschreiben erhalten</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',5,'C')"><span class="option-letter">C</span> Dateien werden beim L&ouml;schen verschl&uuml;sselt statt gel&ouml;scht</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',5,'D')"><span class="option-letter">D</span> Das Dateisystem beh&auml;lt immer die letzten 10 gel&ouml;schten Dateien</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m2-5"></div>
+      </div>
+
+      <div class="quiz-question" data-q="6">
+        <div class="question-num">Frage 7 von 7</div>
+        <div class="question-text">Eine 1-KB-Datei belegt auf einer NTFS-Partition mit 4-KB-Clustergr&ouml;&szlig;e trotzdem 4 KB auf dem Datentr&auml;ger. Wie nennt man den verschwendeten Platz?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m2',6,'A')"><span class="option-letter">A</span> Journaling-Overhead</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',6,'B')"><span class="option-letter">B</span> Inode-Reserve</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',6,'C')"><span class="option-letter">C</span> Slack Space</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m2',6,'D')"><span class="option-letter">D</span> Fragmentierung</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m2-6"></div>
+      </div>
+
+      <div class="quiz-result" id="result-m2">
+        <div class="result-score" id="result-score-m2"></div>
+        <div class="result-label">Punkte erreicht</div>
+        <div class="result-msg" id="result-msg-m2"></div>
+        <button class="reset-btn" onclick="resetQuiz('m2')">Quiz zur&uuml;cksetzen</button>
+        <button class="btn-nav primary" style="margin-left:0.65rem" onclick="showPage('m3-kodierung')">Weiter zu Modul 3 &#8594;</button>
+      </div>
+    </div>
+  </div>
   <div class="page" id="page-m3-kodierung"><span class="chapter-tag tag-text">Modul 03</span><h1>ASCII &amp; UTF-8</h1><p class="lead">Folgt im n&auml;chsten Update.</p></div>
   <div class="page" id="page-m3-zeilenenden"><span class="chapter-tag tag-text">Modul 03</span><h1>CR, LF &amp; CRLF</h1><p class="lead">Folgt im n&auml;chsten Update.</p></div>
   <div class="page" id="page-m3-quiz"><span class="chapter-tag tag-quiz">Quiz 3</span><h1>Quiz 3</h1><p class="lead">Folgt wenn Modul 3 fertig ist.</p></div>
@@ -1151,6 +1440,27 @@ function updateConverter() {
 // Init
 updateByteViz();
 updateConverter();
+
+QUIZ_DATA.m2 = {
+  correct: ['B','C','D','B','C','B','C'],
+  feedback: [
+    { correct: 'Richtig. Metadaten sind Informationen \u00fcber die Datei: Name, Gr\u00f6\u00dfe, Zeitstempel, Berechtigungen, Speicherort. Nicht der Inhalt selbst.',
+      wrong: 'Falsch. Metadaten sind nicht der Dateiinhalt, keine verschl\u00fcsselte Kopie und nicht nur die Dateiendung. Sie beschreiben die Datei von au\u00dfen: Wann erstellt? Wie gro\u00df? Wer darf zugreifen?' },
+    { correct: 'Richtig. Die Dateiendung ist nur ein Hinweis f\u00fcr das OS welches Programm die Datei \u00f6ffnen soll. Der eigentliche Inhalt \u00e4ndert sich durch Umbenennung nicht.',
+      wrong: 'Falsch. Das Umbenennen \u00e4ndert nur den Dateinamen, nicht den Inhalt. Die Bytes der Datei bleiben identisch. Ein Texteditor der .txt versucht zu lesen wird nur unlesbaren Bin\u00e4rkram anzeigen.' },
+    { correct: 'Richtig. FAT32 hat ein hartes Limit von 4 GB minus 1 Byte pro Datei. Das liegt an der 32-Bit-Dateigr\u00f6\u00dfen-Angabe im Dateisystem.',
+      wrong: 'Falsch. NTFS und exFAT haben keine praktisch relevante Dateigr\u00f6\u00dfenbegrenzung. ext4 unterst\u00fctzt bis zu 16 TB pro Datei. Nur FAT32 hat die 4-GB-Grenze.' },
+    { correct: 'Richtig. Journaling schreibt geplante \u00c4nderungen zuerst in ein Journal. Bei einem Absturz kann das Dateisystem das Journal lesen und unvollst\u00e4ndige Operationen r\u00fcckg\u00e4ngig machen.',
+      wrong: 'Falsch. Journaling ist kein Komprimierungsverfahren, kein Backup und keine Verschl\u00fcsselung. Es ist ein Mechanismus zur Fehlertoleranz bei Systemabst\u00fcrzen.' },
+    { correct: 'Richtig. exFAT ist der richtige Kompromiss: von Windows und macOS beschreibbar, keine 4-GB-Grenze, breit kompatibel. NTFS kann macOS nur lesen. FAT32 hat die 4-GB-Grenze. ext4 kann Windows nicht lesen.',
+      wrong: 'Falsch. FAT32 hat eine 4-GB-Grenze. NTFS kann macOS nur lesen, nicht schreiben. ext4 kann Windows ohne Drittanbieter-Software nicht lesen. exFAT ist der richtige Kompromiss f\u00fcr diesen Anwendungsfall.' },
+    { correct: 'Richtig. Beim L\u00f6schen wird nur der Metadaten-Eintrag (Inode/MFT) als "frei" markiert. Die eigentlichen Datenbytes auf dem Datentr\u00e4ger bleiben bis sie durch neue Daten \u00fcberschrieben werden.',
+      wrong: 'Falsch. Windows erstellt keine automatische Sicherungskopie beim L\u00f6schen. Dateien werden nicht verschl\u00fcsselt. Es gibt kein eingebautes "letzte 10 Dateien" System. Der Grund ist: nur der Verweis wird gel\u00f6scht, nicht die Daten selbst.' },
+    { correct: 'Richtig. Slack Space (Leerraum) ist der ungenutzte Platz am Ende eines Clusters. Da Dateien immer in ganzen Clustern gespeichert werden, verschwendet eine kleine Datei fast den gesamten letzten Cluster.',
+      wrong: 'Falsch. Journaling-Overhead ist zus\u00e4tzlicher Platz f\u00fcr das Journal. Inode-Reserve ist reservierter Platz f\u00fcr Metadaten. Fragmentierung ist die Aufteilung einer Datei auf nicht zusammenh\u00e4ngende Cluster. Den verschwendeten Platz nennt man Slack Space.' }
+  ]
+};
+
 </script>
 </body>
 </html>
