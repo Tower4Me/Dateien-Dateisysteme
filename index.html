@@ -558,6 +558,53 @@ p strong { color: var(--text); font-weight: 600; }
   .card-grid { grid-template-columns: 1fr; }
   .conv-grid { grid-template-columns: 1fr; }
 }
+
+/* ─── LIGHT MODE ─── */
+body.light {
+  --bg: #f0f4f8;
+  --surface: #ffffff;
+  --surface2: #f8fafc;
+  --surface3: #edf2f7;
+  --border: #e2e8f0;
+  --border2: #cbd5e0;
+  --text: #1a202c;
+  --text-dim: #4a5568;
+  --text-faint: #a0aec0;
+  --code-bg: #1a202c;
+}
+body.light .topbar {
+  background: rgba(240,244,248,0.95);
+}
+body.light .sidebar {
+  background: #ffffff;
+}
+body.light .code-block {
+  background: #1e2433;
+  color: #e2e8f0;
+}
+
+/* ─── THEME TOGGLE ─── */
+.theme-toggle {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 0.25rem 0.7rem;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: 0.5rem;
+}
+.theme-toggle:hover {
+  border-color: var(--accent, #00c8ff);
+  color: var(--accent, #00c8ff);
+}
+
 </style>
 </head>
 <body>
@@ -658,6 +705,7 @@ p strong { color: var(--text); font-weight: 600; }
       <span class="current" id="breadcrumb">Modul 1 &middot; Grundlagen</span>
     </div>
     <div class="topbar-nav">
+      <button id="theme-btn" class="theme-toggle" onclick="toggleTheme()">&#9790; Dunkel</button>
       <button class="btn-nav" onclick="prevPage()">&#8592; Zur&uuml;ck</button>
       <button class="btn-nav primary" onclick="nextPage()">Weiter &#8594;</button>
     </div>
@@ -3106,6 +3154,27 @@ QUIZ_DATA.m1 = {
       wrong: "Falsch. 1 Hex-Stelle = 4 Bits = halbes Byte. Ein Byte braucht 2 Hex-Stellen. 4 w\u00e4ren 16 Bits = 2 Bytes." }
   ]
 };
+
+
+// ─── THEME TOGGLE ───
+function initTheme() {
+  const saved = localStorage.getItem('theme') || 'dark';
+  applyTheme(saved);
+}
+
+function applyTheme(theme) {
+  document.body.classList.toggle('light', theme === 'light');
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.textContent = theme === 'light' ? '☀ Hell' : '☾ Dunkel';
+  localStorage.setItem('theme', theme);
+}
+
+function toggleTheme() {
+  const isLight = document.body.classList.contains('light');
+  applyTheme(isLight ? 'dark' : 'light');
+}
+
+initTheme();
 
 </script>
 </body>
