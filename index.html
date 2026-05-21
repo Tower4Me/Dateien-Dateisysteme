@@ -635,6 +635,8 @@ body.light .code-block {
       <div class="nav-items">
         <div class="nav-item" onclick="showPage('m2-datei')"><span class="item-dot"></span> Dateien &amp; Metadaten</div>
         <div class="nav-item" onclick="showPage('m2-dateisysteme')"><span class="item-dot"></span> Dateisysteme</div>
+        <div class="nav-item" onclick="showPage('m2-journaling')"><span class="item-dot"></span> Journaling &amp; Fragmentierung</div>
+        <div class="nav-item" onclick="showPage('m2-mounting')"><span class="item-dot"></span> Mounting &amp; fstab</div>
         <div class="nav-item" onclick="showPage('m2-quiz')"><span class="item-dot"></span> Quiz 2<span class="item-score" id="score-m2"></span></div>
       </div>
     </div>
@@ -662,6 +664,7 @@ body.light .code-block {
       <div class="nav-items">
         <div class="nav-item" onclick="showPage('m5-formate')"><span class="item-dot"></span> Formate nach Kategorie</div>
         <div class="nav-item" onclick="showPage('m5-komprimierung')"><span class="item-dot"></span> Komprimierung</div>
+        <div class="nav-item" onclick="showPage('m5-deployment')"><span class="item-dot"></span> Deployment-Formate</div>
         <div class="nav-item" onclick="showPage('m5-quiz')"><span class="item-dot"></span> Quiz 5<span class="item-score" id="score-m5"></span></div>
       </div>
     </div>
@@ -681,6 +684,14 @@ body.light .code-block {
         <div class="nav-item" onclick="showPage('m7-mime')"><span class="item-dot"></span> MIME-Types</div>
         <div class="nav-item" onclick="showPage('m7-base64')"><span class="item-dot"></span> Base64</div>
         <div class="nav-item" onclick="showPage('m7-quiz')"><span class="item-dot"></span> Quiz 7<span class="item-score" id="score-m7"></span></div>
+      </div>
+    </div>
+
+    <div class="nav-module">
+      <div class="nav-module-header"><span class="module-num">08</span> Netzwerk-Dateisysteme</div>
+      <div class="nav-items">
+        <div class="nav-item" onclick="showPage('m8-nfs-smb')"><span class="item-dot"></span> NFS &amp; SMB</div>
+        <div class="nav-item" onclick="showPage('m8-quiz')"><span class="item-dot"></span> Quiz 8<span class="item-score" id="score-m8"></span></div>
       </div>
     </div>
 
@@ -1156,11 +1167,197 @@ stat datei.txt
     <div class="divider"></div>
     <div style="display:flex;gap:0.75rem">
       <button class="btn-nav" onclick="showPage('m2-datei')">&#8592; Zur&uuml;ck</button>
-      <button class="btn-nav primary" onclick="showPage('m2-quiz')">Weiter: Quiz 2 &#8594;</button>
+      <button class="btn-nav primary" onclick="showPage('m2-journaling')">Weiter: Journaling &amp; Fragmentierung &#8594;</button>
     </div>
   </div>
 
-  <!-- ══ MODUL 2: QUIZ ══ -->
+  <!-- ══ MODUL 2: JOURNALING & FRAGMENTIERUNG ══ -->
+  <div class="page" id="page-m2-journaling">
+    <span class="chapter-tag tag-file">Modul 02 &middot; Was ist eine Datei?</span>
+    <h1>Journaling &amp; Fragmentierung</h1>
+    <p class="lead">Zwei Konzepte die direkt die Zuverl&auml;ssigkeit und Geschwindigkeit eines Dateisystems bestimmen. Beide sind IHK-relevant.</p>
+
+    <h2>Journaling</h2>
+    <p>Stell dir vor du schreibst eine Datei und mitten im Schreibvorgang f&auml;llt der Strom aus. Ohne Sicherheitsmechanismus liegt die Datei jetzt halb geschrieben auf der Platte: der Verzeichniseintrag sagt die Datei existiert, aber die Daten sind unvollst&auml;ndig. Das Dateisystem ist inkonsistent.</p>
+
+    <div class="info-box cyan">
+      <div class="box-label">Journaling erkl&auml;rt</div>
+      <p>Journaling (Journal = Tagebuch/Protokoll) l&ouml;st dieses Problem. Bevor das Dateisystem eine &Auml;nderung vornimmt, schreibt es die geplante Aktion zuerst in ein separates <strong>Journal</strong> (einen reservierten Bereich auf dem Datentr&auml;ger). Erst danach wird die eigentliche &Auml;nderung ausgef&uuml;hrt. Nach einem Absturz liest das System beim n&auml;chsten Start das Journal und wei&szlig; genau: welche Operationen waren abgeschlossen, welche nicht. Unvollst&auml;ndige werden r&uuml;ckg&auml;ngig gemacht oder wiederholt.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card-item green">
+        <div class="card-label">Mit Journaling</div>
+        <h4>NTFS, ext4, APFS</h4>
+        <p>Nach einem Absturz: System pr&uuml;ft das Journal beim Booten, stellt konsistenten Zustand her. Geht schnell, meist sekunden. Keine korrumpierten Dateien.</p>
+      </div>
+      <div class="card-item red">
+        <div class="card-label">Ohne Journaling</div>
+        <h4>FAT32, exFAT</h4>
+        <p>Nach einem Absturz: System muss den gesamten Datentr&auml;ger pr&uuml;fen (chkdsk / fsck). Dauert bei gro&szlig;en Laufwerken lange. Dateien k&ouml;nnen korrumpiert sein.</p>
+      </div>
+    </div>
+
+    <div class="info-box blue">
+      <div class="box-label">Alltagsvergleich</div>
+      <p>Journaling ist wie eine Einkaufsliste die du vor dem Einkaufen schreibst. Wenn du mitten im Laden ohnm&auml;chtig wirst, kann jemand anderes die Liste lesen und wissen: was ist schon im Korb, was fehlt noch. Ohne Liste wei&szlig; keiner wo du aufgeh&ouml;rt hast.</p>
+    </div>
+
+    <h2>Fragmentierung</h2>
+    <p>Ein Dateisystem speichert Dateien in Bl&ouml;cken (auch Cluster genannt). Wenn eine Datei zu gro&szlig; f&uuml;r einen zusammenh&auml;ngenden Bereich ist, werden ihre Bl&ouml;cke verteilt gespeichert. Das nennt sich <strong>Fragmentierung</strong>.</p>
+
+    <div class="card-grid">
+      <div class="card-item cyan">
+        <div class="card-label">Nicht fragmentiert</div>
+        <h4>Bl&ouml;cke liegen nebeneinander</h4>
+        <p>Der Lesekopf einer Festplatte f&auml;hrt einmal &uuml;ber den Bereich. Schnell. Bei SSDs (Solid State Drive = Flashspeicher) spielt die Position physikalisch keine Rolle.</p>
+      </div>
+      <div class="card-item yellow">
+        <div class="card-label">Fragmentiert</div>
+        <h4>Bl&ouml;cke &uuml;ber die Platte verteilt</h4>
+        <p>Der Lesekopf einer HDD (Hard Disk Drive = Festplatte mit Magnetscheibe) muss springen. Jeder Sprung kostet Zeit. Bei vielen kleinen Fragmenten wird die Platte messbar langsamer.</p>
+      </div>
+    </div>
+
+    <h2>Warum fragmentiert ein Dateisystem?</h2>
+    <p>Beim Schreiben sucht das Dateisystem freie Bl&ouml;cke. Am Anfang liegen alles zusammenh&auml;ngend. Mit der Zeit werden Dateien gel&ouml;scht, neue geschrieben, und die Freifl&auml;chen werden l&uuml;ckenhaft. Neue gro&szlig;e Dateien passen nicht mehr in eine L&uuml;cke und werden aufgeteilt.</p>
+
+    <div class="code-block"><span class="code-lang">Schematisch</span><span class="cm"># Frisch formatiert: alles frei</span>
+[  A  ][  A  ][  A  ][FREI ][FREI ][FREI ][FREI ]
+
+<span class="cm"># Datei B geschrieben:</span>
+[  A  ][  A  ][  A  ][  B  ][  B  ][FREI ][FREI ]
+
+<span class="cm"># Datei A gel&ouml;scht:</span>
+[FREI ][FREI ][FREI ][  B  ][  B  ][FREI ][FREI ]
+
+<span class="cm"># Gro&szlig;e Datei C (4 Bl&ouml;cke) geschrieben:</span>
+[  C  ][  C  ][  C  ][  B  ][  B  ][  C  ][FREI ]
+<span class="cm"># C liegt jetzt in zwei getrennten Bereichen = fragmentiert</span></div>
+
+    <h2>Defragmentierung</h2>
+    <p>Defragmentierung (kurz: Defrag) ordnet die Bl&ouml;cke neu an damit Dateien wieder zusammenh&auml;ngend liegen. Windows hat seit XP einen integrierten Defragmentierer.</p>
+
+    <div class="info-box red">
+      <div class="box-label">SSD niemals defragmentieren</div>
+      <p>SSDs haben keine beweglichen Teile. Fragmentierung verlangsamt SSDs kaum. Defragmentierung schreibt aber Daten um, was die begrenzte Schreiblebensdauer einer SSD unn&ouml;tig verbraucht. Windows erkennt SSDs automatisch und deaktiviert die Defragmentierung f&uuml;r sie. Manuell defragmentieren ist bei SSDs kontraproduktiv.</p>
+    </div>
+
+    <h2>Slack Space</h2>
+    <p>Dateisysteme arbeiten in festen Blockgr&ouml;&szlig;en (typisch 4 KB bei NTFS). Eine Datei die nur 1 KB gro&szlig; ist, belegt trotzdem einen ganzen 4-KB-Block. Die restlichen 3 KB bleiben leer. Dieser verschwendete Platz hei&szlig;t <strong>Slack Space</strong>.</p>
+
+    <table class="data-table">
+      <thead><tr><th>Konzept</th><th>Erkl&auml;rung</th><th>L&ouml;sung</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Journaling</strong></td><td>Protokoll vor Schreiboperation f&uuml;r Absturzsicherheit</td><td>Eingebaut in NTFS, ext4</td></tr>
+        <tr><td><strong>Fragmentierung</strong></td><td>Dateibl&ouml;cke nicht zusammenh&auml;ngend auf HDD</td><td>Defragmentierung (nur HDD)</td></tr>
+        <tr><td><strong>Slack Space</strong></td><td>Verschwendeter Platz durch Blockgr&ouml;&szlig;en</td><td>Kleinere Clustergroesse w&auml;hlen</td></tr>
+      </tbody>
+    </table>
+
+    <div class="divider"></div>
+    <div style="display:flex;gap:0.75rem">
+      <button class="btn-nav" onclick="showPage('m2-dateisysteme')">&#8592; Zur&uuml;ck</button>
+      <button class="btn-nav primary" onclick="showPage('m2-mounting')">Weiter: Mounting &amp; fstab &#8594;</button>
+    </div>
+  </div>
+
+  <!-- ══ MODUL 2: MOUNTING & FSTAB ══ -->
+  <div class="page" id="page-m2-mounting">
+    <span class="chapter-tag tag-file">Modul 02 &middot; Was ist eine Datei?</span>
+    <h1>Mounting &amp; fstab</h1>
+    <p class="lead">Unter Linux existiert keine Laufwerksbuchstaben wie C: oder D:. Stattdessen gibt es einen einzigen Verzeichnisbaum. Jedes Laufwerk wird in diesen Baum <strong>eingehängt</strong>.</p>
+
+    <h2>Was ist Mounting?</h2>
+    <p>Mounting (einh&auml;ngen) bedeutet: ein Dateisystem wird einem Verzeichnis im bestehenden Verzeichnisbaum zugewiesen. Dieses Verzeichnis hei&szlig;t <strong>Mountpoint</strong> (Einh&auml;ngepunkt). Ab dem Moment des Mountens ist der Inhalt des Datentr&auml;gers &uuml;ber diesen Pfad erreichbar.</p>
+
+    <div class="info-box cyan">
+      <div class="box-label">Alltagsvergleich</div>
+      <p>Stell dir vor du hast einen Aktenschrank (dein System) mit Schubladen (Verzeichnisse). Mounting ist wie das Einschieben einer neuen Schublade an einer bestimmten Position. Die Schublade existiert vorher, aber ihr Inhalt ist erst nach dem Einschieben erreichbar. Ziehst du sie heraus (unmount), ist der Inhalt wieder weg, aber die Schublade selbst ist unber&uuml;hrt.</p>
+    </div>
+
+    <h2>Unter Windows vs. Linux</h2>
+    <div class="compare-row">
+      <div class="compare-col good">
+        <div class="col-header">Linux</div>
+        <ul>
+          <li>Ein einziger Baum, Wurzel ist <code style="font-family:'DM Mono',monospace">/</code></li>
+          <li>Laufwerke werden in Verzeichnisse gemountet</li>
+          <li>Typisch: <code style="font-family:'DM Mono',monospace">/mnt/usb</code> oder <code style="font-family:'DM Mono',monospace">/media/ben/stick</code></li>
+          <li>Manuell oder automatisch via <code style="font-family:'DM Mono',monospace">/etc/fstab</code></li>
+        </ul>
+      </div>
+      <div class="compare-col bad">
+        <div class="col-header">Windows</div>
+        <ul>
+          <li>Jedes Laufwerk hat einen Buchstaben: C:, D:, E:</li>
+          <li>Laufwerksbuchstaben werden automatisch vergeben</li>
+          <li>Auch Windows unterst&uuml;tzt Mountpoints (NTFS-Funktion)</li>
+          <li>Seltener manuell konfiguriert</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>Mount-Befehle unter Linux</h2>
+    <div class="code-block"><span class="code-lang">Linux Terminal</span><span class="cm"># Laufwerk manuell mounten</span>
+mount /dev/sdb1 /mnt/usb
+<span class="cm"># /dev/sdb1 = erste Partition des zweiten Datentr&auml;gers</span>
+<span class="cm"># /mnt/usb  = Mountpoint (muss als Verzeichnis existieren)</span>
+
+<span class="cm"># Laufwerk wieder aush&auml;ngen</span>
+umount /mnt/usb
+<span class="cm"># Achtung: kein "n" - es heisst umount, nicht unmount</span>
+
+<span class="cm"># Alle aktuell gemounteten Dateisysteme anzeigen</span>
+mount
+<span class="cm"># oder moderner:</span>
+findmnt
+
+<span class="cm"># Alle Laufwerke und Partitionen anzeigen</span>
+lsblk</div>
+
+    <h2>Die /etc/fstab</h2>
+    <p>Die Datei <code style="font-family:'DM Mono',monospace">/etc/fstab</code> (File System Table = Dateisystemtabelle) steuert was beim Systemstart automatisch gemountet wird. Jede Zeile ist ein Eintrag f&uuml;r ein Dateisystem.</p>
+
+    <div class="code-block"><span class="code-lang">/etc/fstab &ndash; Aufbau</span><span class="cm"># Ger&auml;t              Mountpoint    Typ     Optionen        dump  pass</span>
+/dev/sda1            /             ext4    defaults        0     1
+/dev/sda2            /home         ext4    defaults        0     2
+/dev/sdb1            /mnt/daten    ntfs    defaults        0     0
+UUID=1A2B-3C4D       /mnt/usb      vfat    auto,user       0     0
+<span class="cm"># UUID (Universally Unique Identifier) ist sicherer als /dev/sdX,</span>
+<span class="cm"># weil Ger&auml;tenamen sich &auml;ndern k&ouml;nnen.</span></div>
+
+    <div class="card-grid">
+      <div class="card-item cyan"><div class="card-label">Spalte 1</div><h4>Ger&auml;t</h4><p>Pfad wie <code style="font-family:'DM Mono',monospace">/dev/sda1</code> oder besser UUID. Identifiziert den Datentr&auml;ger.</p></div>
+      <div class="card-item blue"><div class="card-label">Spalte 2</div><h4>Mountpoint</h4><p>Wohin wird gemountet. Muss ein existierendes Verzeichnis sein.</p></div>
+      <div class="card-item green"><div class="card-label">Spalte 3</div><h4>Dateisystemtyp</h4><p>ext4, ntfs, vfat (FAT32), exfat, nfs, cifs (SMB)...</p></div>
+      <div class="card-item yellow"><div class="card-label">Spalte 4</div><h4>Optionen</h4><p>defaults, ro (read-only), user (normale Nutzer d&uuml;rfen mounten), noauto...</p></div>
+    </div>
+
+    <div class="info-box yellow">
+      <div class="box-label">Fehler in fstab = System startet nicht</div>
+      <p>Eine fehlerhafte <code style="font-family:'DM Mono',monospace">/etc/fstab</code> kann dazu f&uuml;hren dass Linux beim Booten h&auml;ngt. Deshalb immer vor der &Auml;nderung ein Backup machen und mit <code style="font-family:'DM Mono',monospace">mount -a</code> testen (versucht alle fstab-Eintr&auml;ge zu mounten ohne Neustart).</p>
+    </div>
+
+    <h2>Ger&auml;tedateien unter Linux</h2>
+    <p>Unter Linux sind Ger&auml;te wie Festplatten als Dateien unter <code style="font-family:'DM Mono',monospace">/dev/</code> repr&auml;sentiert:</p>
+    <table class="data-table">
+      <thead><tr><th>Pfad</th><th>Bedeutung</th></tr></thead>
+      <tbody>
+        <tr><td><code style="font-family:'DM Mono',monospace">/dev/sda</code></td><td>Erster SATA/SCSI-Datentr&auml;ger (gesamtes Ger&auml;t)</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace">/dev/sda1</code></td><td>Erste Partition des ersten Datentr&auml;gers</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace">/dev/sdb2</code></td><td>Zweite Partition des zweiten Datentr&auml;gers</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace">/dev/nvme0n1</code></td><td>Erste NVMe-SSD</td></tr>
+        <tr><td><code style="font-family:'DM Mono',monospace">/dev/nvme0n1p1</code></td><td>Erste Partition der NVMe-SSD</td></tr>
+      </tbody>
+    </table>
+
+    <div class="divider"></div>
+    <div style="display:flex;gap:0.75rem">
+      <button class="btn-nav" onclick="showPage('m2-journaling')">&#8592; Zur&uuml;ck</button>
+      <button class="btn-nav primary" onclick="showPage('m2-quiz')">Weiter: Quiz 2 &#8594;</button>
+    </div>
+  </div>
   <div class="page" id="page-m2-quiz">
     <span class="chapter-tag tag-quiz">Modul 02 &middot; Quiz</span>
     <h1>Quiz 2: Dateien &amp; Dateisysteme</h1>
@@ -1907,11 +2104,99 @@ file datei.xyz
     <div class="divider"></div>
     <div style="display:flex;gap:0.75rem">
       <button class="btn-nav" onclick="showPage('m5-formate')">&#8592; Zur&uuml;ck</button>
-      <button class="btn-nav primary" onclick="showPage('m5-quiz')">Weiter: Quiz 5 &#8594;</button>
+      <button class="btn-nav primary" onclick="showPage('m5-deployment')">Weiter: Deployment-Formate &#8594;</button>
     </div>
   </div>
 
-  <!-- ══ MODUL 5: QUIZ ══ -->
+  <!-- ══ MODUL 5: DEPLOYMENT-FORMATE ══ -->
+  <div class="page" id="page-m5-deployment">
+    <span class="chapter-tag tag-fmt">Modul 05 &middot; Dateiformate</span>
+    <h1>Deployment-Formate</h1>
+    <p class="lead">Als FiSi wirst du Betriebssysteme und Software auf viele Rechner gleichzeitig ausrollen. Daf&uuml;r gibt es spezielle Formate die du kennen musst.</p>
+
+    <h2>ISO &ndash; das Abbild eines Datentr&auml;gers</h2>
+    <p>Eine ISO-Datei (benannt nach dem Standard ISO 9660 f&uuml;r optische Datentr&auml;ger) ist ein exaktes Abbild (Image) eines gesamten Datentr&auml;gers oder Dateisystems, Byte f&uuml;r Byte. Sie enth&auml;lt nicht nur die Dateien selbst, sondern auch die komplette Struktur des Datentr&auml;gers.</p>
+
+    <div class="card-grid">
+      <div class="card-item cyan">
+        <div class="card-label">Einsatz</div>
+        <h4>Betriebssystem-Installation</h4>
+        <p>Windows, Linux, macOS werden als ISO verteilt. Du lädst die ISO herunter, schreibst sie auf einen USB-Stick (z.B. mit Rufus oder dd) und bootest davon.</p>
+      </div>
+      <div class="card-item blue">
+        <div class="card-label">Einsatz</div>
+        <h4>Virtuelle Maschinen</h4>
+        <p>VMware, VirtualBox und Hyper-V können ISO-Dateien direkt als virtuelles DVD-Laufwerk einbinden. Kein physischer Datenträger nötig.</p>
+      </div>
+      <div class="card-item green">
+        <div class="card-label">Einsatz</div>
+        <h4>PXE-Boot</h4>
+        <p>Beim Netzwerk-Deployment über PXE (Preboot Execution Environment = Vorstart-Ausführungsumgebung) wird oft eine ISO oder deren Inhalt über das Netzwerk bereitgestellt.</p>
+      </div>
+    </div>
+
+    <div class="code-block"><span class="code-lang">Linux Terminal</span><span class="cm"># ISO auf USB-Stick schreiben (dd = disk dump)</span>
+dd if=windows11.iso of=/dev/sdb bs=4M status=progress
+<span class="cm"># if = input file, of = output file, bs = Blockgr&ouml;&szlig;e</span>
+<span class="cm"># ACHTUNG: /dev/sdb wird komplett &uuml;berschrieben!</span>
+
+<span class="cm"># ISO mounten um Inhalt anzuschauen (ohne sie zu entpacken)</span>
+mount -o loop windows11.iso /mnt/iso
+<span class="cm"># -o loop = Loop-Device, behandelt die Datei wie ein Ger&auml;t</span></div>
+
+    <h2>WIM &ndash; Windows Imaging Format</h2>
+    <p>WIM (Windows Imaging Format = Windows-Abbildformat) ist das von Microsoft entwickelte Format f&uuml;r Betriebssystem-Images. Es wurde speziell f&uuml;r das Deployment von Windows entwickelt und steckt im Kern jeder Windows-Installation.</p>
+
+    <div class="info-box blue">
+      <div class="box-label">Warum WIM statt ISO?</div>
+      <p>Eine ISO ist ein Abbild eines Datentr&auml;gers. WIM ist ein Abbild eines Dateisystems. Der Unterschied: WIM ist hardware-unabh&auml;ngig, komprimiert, und mehrere Windows-Editionen (Home, Pro, Enterprise) k&ouml;nnen in einer einzigen WIM-Datei stecken. Bei der Installation w&auml;hlst du dann welche Edition du ausrollen willst.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card-item yellow">
+        <div class="card-label">install.wim / install.esd</div>
+        <h4>Das eigentliche Windows-Image</h4>
+        <p>Auf jedem Windows-Installationsmedium liegt unter <code style="font-family:'DM Mono',monospace">sources\install.wim</code> das komprimierte Windows-Dateisystem. Die .esd-Variante ist st&auml;rker komprimiert.</p>
+      </div>
+      <div class="card-item purple">
+        <div class="card-label">boot.wim</div>
+        <h4>Das Boot-Image</h4>
+        <p>Enth&auml;lt die Windows PE (Preinstallation Environment = Vorinstallationsumgebung): ein minimales Windows das nur f&uuml;r die Installation gestartet wird.</p>
+      </div>
+    </div>
+
+    <div class="code-block"><span class="code-lang">Windows CMD / PowerShell &ndash; DISM</span><span class="cm"># DISM = Deployment Image Servicing and Management Tool</span>
+<span class="cm"># Inhalt einer WIM-Datei anzeigen (welche Editionen sind drin)</span>
+dism /Get-WimInfo /WimFile:install.wim
+
+<span class="cm"># WIM-Image auf ein Laufwerk anwenden (auspacken)</span>
+dism /Apply-Image /ImageFile:install.wim /Index:1 /ApplyDir:D:\
+
+<span class="cm"># WIM-Image mounten um Dateien anzuschauen</span>
+dism /Mount-Image /ImageFile:install.wim /Index:1 /MountDir:C:\mount</div>
+
+    <h2>Weitere relevante Deployment-Formate</h2>
+    <table class="data-table">
+      <thead><tr><th>Format</th><th>Beschreibung</th><th>Einsatz</th></tr></thead>
+      <tbody>
+        <tr><td><strong>VHD / VHDX</strong></td><td>Virtual Hard Disk = virtuelle Festplatte (Microsoft). VHDX ist die moderne Version.</td><td>Hyper-V VMs, Windows-To-Go, Backups</td></tr>
+        <tr><td><strong>VMDK</strong></td><td>VMware Disk Format. Virtuelle Festplatte f&uuml;r VMware.</td><td>VMware Workstation, ESXi</td></tr>
+        <tr><td><strong>OVA / OVF</strong></td><td>Open Virtualization Format = offenes Virtualisierungsformat. Paketierte VM mit Konfiguration.</td><td>VM-Import/-Export zwischen Hypervisoren</td></tr>
+        <tr><td><strong>TAR.GZ / TAR.XZ</strong></td><td>Gepackte Linux-Pakete oder Container-Images.</td><td>Docker-Images, Software-Deployment unter Linux</td></tr>
+      </tbody>
+    </table>
+
+    <div class="info-box green">
+      <div class="box-label">Zusammenhang mit PXE</div>
+      <p>Beim PXE-Boot l&auml;dt ein Client &uuml;ber das Netzwerk zuerst das <code style="font-family:'DM Mono',monospace">boot.wim</code> (Windows PE) oder ein Linux-Boot-Image. Danach kann er &uuml;ber Windows Deployment Services (WDS) oder einen anderen Deployment-Server das eigentliche <code style="font-family:'DM Mono',monospace">install.wim</code> empfangen und installieren. Alle diese Schritte arbeiten mit den hier beschriebenen Formaten.</p>
+    </div>
+
+    <div class="divider"></div>
+    <div style="display:flex;gap:0.75rem">
+      <button class="btn-nav" onclick="showPage('m5-komprimierung')">&#8592; Zur&uuml;ck</button>
+      <button class="btn-nav primary" onclick="showPage('m5-quiz')">Weiter: Quiz 5 &#8594;</button>
+    </div>
+  </div>
   <div class="page" id="page-m5-quiz">
     <span class="chapter-tag tag-quiz">Modul 05 &middot; Quiz</span>
     <h1>Quiz 5: Dateiformate &amp; Komprimierung</h1>
@@ -2449,6 +2734,195 @@ echo -n "Hallo Welt" | base64
         <div class="result-label">Punkte erreicht</div>
         <div class="result-msg" id="result-msg-m7"></div>
         <button class="reset-btn" onclick="resetQuiz('m7')">Quiz zur&uuml;cksetzen</button>
+        <button class="btn-nav primary" style="margin-left:0.65rem" onclick="showPage('m8-nfs-smb')">Weiter zu Modul 8 &#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MODUL 8: NETZWERK-DATEISYSTEME ══ -->
+  <div class="page" id="page-m8-nfs-smb">
+    <span class="chapter-tag tag-file">Modul 08 &middot; Netzwerk-Dateisysteme</span>
+    <h1>NFS &amp; SMB</h1>
+    <p class="lead">Dateisysteme m&uuml;ssen nicht lokal sein. Netzwerk-Dateisysteme erlauben es, Dateien auf einem entfernten Server so einzubinden als w&auml;ren sie lokal auf dem eigenen Rechner. F&uuml;r FiSi ist das t&auml;gliche Realit&auml;t.</p>
+
+    <h2>Warum Netzwerk-Dateisysteme?</h2>
+    <div class="card-grid">
+      <div class="card-item cyan"><div class="card-label">Zentralisierung</div><h4>Ein Server, viele Clients</h4><p>Dateien liegen einmal zentral auf einem Server. Alle Clients greifen auf dieselben Daten zu. Kein manuelles Synchronisieren.</p></div>
+      <div class="card-item blue"><div class="card-label">Backup</div><h4>Einfacher zu sichern</h4><p>Daten auf einem zentralen Server k&ouml;nnen zentral gesichert werden, statt auf jedem einzelnen Client-PC.</p></div>
+      <div class="card-item green"><div class="card-label">Zugriffskontrolle</div><h4>Berechtigungen zentral</h4><p>Wer auf welches Verzeichnis zugreifen darf, wird auf dem Server konfiguriert, nicht auf jedem Client.</p></div>
+    </div>
+
+    <h2>SMB &ndash; Server Message Block</h2>
+    <p>SMB (Server Message Block) ist das Protokoll f&uuml;r Dateifreigaben in Windows-Netzwerken. Die Open-Source-Implementierung unter Linux hei&szlig;t <strong>Samba</strong>. SMB l&auml;uft auf Port 445.</p>
+
+    <div class="info-box blue">
+      <div class="box-label">CIFS ist SMB</div>
+      <p>Du wirst CIFS (Common Internet File System = Gemeinsames Internet-Dateisystem) als alten Namen f&uuml;r SMB begegnen. Technisch ist CIFS eine &auml;ltere Version von SMB. Heute meinen beide dasselbe Protokoll. In Linux-Befehlen wird h&auml;ufig noch <code style="font-family:'DM Mono',monospace">cifs</code> als Dateisystemtyp verwendet.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card-item yellow">
+        <div class="card-label">SMB-Einsatz</div>
+        <h4>Windows-Netzwerke</h4>
+        <p>Netzwerklaufwerke in Windows (Z:, Y:...). Active Directory-Freigaben. Druckerfreigaben. Linux-Server die Windows-Clients bedienen (via Samba).</p>
+      </div>
+      <div class="card-item purple">
+        <div class="card-label">UNC-Pfad</div>
+        <h4>\\Server\Freigabe</h4>
+        <p>Windows-Freigaben werden als UNC-Pfad (Universal Naming Convention = universelle Namenskonvention) angesprochen: <code style="font-family:'DM Mono',monospace">\\fileserver\daten</code>. Doppelter Backslash, dann Servername, dann Freigabename.</p>
+      </div>
+    </div>
+
+    <div class="code-block"><span class="code-lang">Windows &amp; Linux &ndash; SMB</span><span class="cm">-- Windows: Netzwerklaufwerk verbinden</span>
+net use Z: \\fileserver\daten /persistent:yes
+<span class="cm">-- Oder: Netzlaufwerk verbinden mit Anmeldedaten</span>
+net use Z: \\fileserver\daten /user:domain\ben Passwort
+
+<span class="cm"># Linux: SMB-Freigabe mounten</span>
+mount -t cifs //fileserver/daten /mnt/netz -o username=ben,password=pw
+<span class="cm"># In /etc/fstab eintragen f&uuml;r automatisches Mounten:</span>
+//fileserver/daten  /mnt/netz  cifs  username=ben,password=pw,_netdev  0  0
+<span class="cm"># _netdev = erst mounten wenn Netzwerk verf&uuml;gbar</span></div>
+
+    <h2>NFS &ndash; Network File System</h2>
+    <p>NFS (Network File System = Netzwerk-Dateisystem) ist das Standard-Protokoll f&uuml;r Dateifreigaben in Unix/Linux-Netzwerken. Entwickelt von Sun Microsystems (1984). Einfacher als SMB, aber ohne native Windows-Unterst&uuml;tzung. NFS l&auml;uft typisch auf Port 2049.</p>
+
+    <div class="card-grid">
+      <div class="card-item green">
+        <div class="card-label">NFS-Einsatz</div>
+        <h4>Linux/Unix-Netzwerke</h4>
+        <p>Home-Verzeichnisse auf Linux-Servern. Shared Storage in Server-Clustern. Docker/Kubernetes-Storage. Linux-Clients die auf Linux-Server zugreifen.</p>
+      </div>
+      <div class="card-item cyan">
+        <div class="card-label">NFS-Vorteil</div>
+        <h4>Transparent</h4>
+        <p>Gemountete NFS-Freigaben sehen f&uuml;r den Benutzer genauso aus wie lokale Verzeichnisse. Kein Unterschied im Alltag.</p>
+      </div>
+    </div>
+
+    <div class="code-block"><span class="code-lang">Linux &ndash; NFS</span><span class="cm"># NFS-Freigabe manuell mounten</span>
+mount -t nfs fileserver:/srv/daten /mnt/nfs
+<span class="cm"># fileserver:/srv/daten = Server:Pfad auf dem Server</span>
+
+<span class="cm"># In /etc/fstab:</span>
+fileserver:/srv/daten  /mnt/nfs  nfs  defaults,_netdev  0  0
+
+<span class="cm"># Auf dem NFS-Server: Freigaben anzeigen</span>
+showmount -e fileserver
+
+<span class="cm"># NFS-Exporte konfigurieren (auf dem Server, /etc/exports)</span>
+/srv/daten  192.168.1.0/24(rw,sync,no_subtree_check)</span></div>
+
+    <h2>SMB vs. NFS auf einen Blick</h2>
+    <table class="data-table">
+      <thead><tr><th>Eigenschaft</th><th>SMB / CIFS</th><th>NFS</th></tr></thead>
+      <tbody>
+        <tr><td>Entwickelt von</td><td>IBM/Microsoft</td><td>Sun Microsystems</td></tr>
+        <tr><td>Haupt-Einsatz</td><td>Windows-Netzwerke</td><td>Linux/Unix-Netzwerke</td></tr>
+        <tr><td>Linux-Implementierung</td><td>Samba</td><td>Nativ in Linux</td></tr>
+        <tr><td>Windows-Unterst&uuml;tzung</td><td>Nativ</td><td>Nur mit zus. Software (NFS-Client)</td></tr>
+        <tr><td>Authentifizierung</td><td>Benutzer/Passwort, AD-Integration</td><td>IP-basiert (einfacher, weniger sicher)</td></tr>
+        <tr><td>Port</td><td>445 (TCP)</td><td>2049 (TCP/UDP)</td></tr>
+        <tr><td>Dateisystemtyp in fstab</td><td>cifs</td><td>nfs</td></tr>
+      </tbody>
+    </table>
+
+    <div class="info-box yellow">
+      <div class="box-label">F&uuml;r die IHK</div>
+      <p>Du solltest erkl&auml;ren k&ouml;nnen: was ein Netzwerk-Dateisystem ist, den Unterschied SMB vs. NFS, wann man welches nimmt, und was ein UNC-Pfad ist. Der Befehl <code style="font-family:'DM Mono',monospace">net use</code> f&uuml;r Windows-Netzlaufwerke und das Mounten in <code style="font-family:'DM Mono',monospace">/etc/fstab</code> mit dem Typ <code style="font-family:'DM Mono',monospace">cifs</code> oder <code style="font-family:'DM Mono',monospace">nfs</code> sind praxisrelevant.</p>
+    </div>
+
+    <div class="divider"></div>
+    <div style="display:flex;gap:0.75rem">
+      <button class="btn-nav" onclick="showPage('m7-quiz')">&#8592; Zur&uuml;ck</button>
+      <button class="btn-nav primary" onclick="showPage('m8-quiz')">Weiter: Quiz 8 &#8594;</button>
+    </div>
+  </div>
+
+  <!-- ══ MODUL 8: QUIZ ══ -->
+  <div class="page" id="page-m8-quiz">
+    <span class="chapter-tag tag-quiz">Modul 08 &middot; Quiz</span>
+    <h1>Quiz 8: Netzwerk-Dateisysteme</h1>
+    <p class="lead">6 Fragen zu NFS, SMB und Netzlaufwerken.</p>
+    <div class="quiz-container" id="quiz-m8">
+
+      <div class="quiz-question" data-q="0">
+        <div class="question-num">Frage 1 von 6</div>
+        <div class="question-text">Welches Protokoll wird f&uuml;r Windows-Netzwerkfreigaben standardm&auml;&szlig;ig verwendet?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m8',0,'A')"><span class="option-letter">A</span> NFS</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',0,'B')"><span class="option-letter">B</span> SMB</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',0,'C')"><span class="option-letter">C</span> FTP</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',0,'D')"><span class="option-letter">D</span> HTTP</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m8-0"></div>
+      </div>
+
+      <div class="quiz-question" data-q="1">
+        <div class="question-num">Frage 2 von 6</div>
+        <div class="question-text">Was ist Samba?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m8',1,'A')"><span class="option-letter">A</span> Ein Linux-Dateisystem</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',1,'B')"><span class="option-letter">B</span> Die Open-Source-Implementierung von SMB f&uuml;r Linux</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',1,'C')"><span class="option-letter">C</span> Ein NFS-Client f&uuml;r Windows</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',1,'D')"><span class="option-letter">D</span> Ein Backup-Protokoll</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m8-1"></div>
+      </div>
+
+      <div class="quiz-question" data-q="2">
+        <div class="question-num">Frage 3 von 6</div>
+        <div class="question-text">Wie lautet der korrekte UNC-Pfad um auf die Freigabe "projekte" auf dem Server "srv01" zuzugreifen?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m8',2,'A')"><span class="option-letter">A</span> <code style="font-family:'DM Mono',monospace">http://srv01/projekte</code></button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',2,'B')"><span class="option-letter">B</span> <code style="font-family:'DM Mono',monospace">/srv01/projekte</code></button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',2,'C')"><span class="option-letter">C</span> <code style="font-family:'DM Mono',monospace">\\srv01\projekte</code></button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',2,'D')"><span class="option-letter">D</span> <code style="font-family:'DM Mono',monospace">smb://srv01/projekte</code></button>
+        </div>
+        <div class="quiz-feedback" id="fb-m8-2"></div>
+      </div>
+
+      <div class="quiz-question" data-q="3">
+        <div class="question-num">Frage 4 von 6</div>
+        <div class="question-text">Welcher Dateisystemtyp wird in /etc/fstab f&uuml;r eine SMB-Freigabe angegeben?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m8',3,'A')"><span class="option-letter">A</span> smb</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',3,'B')"><span class="option-letter">B</span> samba</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',3,'C')"><span class="option-letter">C</span> ntfs</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',3,'D')"><span class="option-letter">D</span> cifs</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m8-3"></div>
+      </div>
+
+      <div class="quiz-question" data-q="4">
+        <div class="question-num">Frage 5 von 6</div>
+        <div class="question-text">Du hast ein reines Linux-Netzwerk und willst Verzeichnisse zwischen Servern teilen. Welches Protokoll ist die naheliegendste Wahl?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m8',4,'A')"><span class="option-letter">A</span> SMB</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',4,'B')"><span class="option-letter">B</span> FTP</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',4,'C')"><span class="option-letter">C</span> NFS</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',4,'D')"><span class="option-letter">D</span> HTTP</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m8-4"></div>
+      </div>
+
+      <div class="quiz-question" data-q="5">
+        <div class="question-num">Frage 6 von 6</div>
+        <div class="question-text">Was bedeutet die Option <code style="font-family:'DM Mono',monospace">_netdev</code> in einem /etc/fstab-Eintrag?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="selectOpt(this,'m8',5,'A')"><span class="option-letter">A</span> Die Freigabe wird nur f&uuml;r bestimmte Benutzer gemountet</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',5,'B')"><span class="option-letter">B</span> Das Dateisystem wird erst gemountet wenn das Netzwerk verf&uuml;gbar ist</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',5,'C')"><span class="option-letter">C</span> Die Verbindung ist verschl&uuml;sselt</button>
+          <button class="quiz-option" onclick="selectOpt(this,'m8',5,'D')"><span class="option-letter">D</span> Das Ger&auml;t ist ein Netzwerkdrucker</button>
+        </div>
+        <div class="quiz-feedback" id="fb-m8-5"></div>
+      </div>
+
+      <div class="quiz-result" id="result-m8">
+        <div class="result-score" id="result-score-m8"></div>
+        <div class="result-label">Punkte erreicht</div>
+        <div class="result-msg" id="result-msg-m8"></div>
+        <button class="reset-btn" onclick="resetQuiz('m8')">Quiz zur&uuml;cksetzen</button>
         <button class="btn-nav primary" style="margin-left:0.65rem" onclick="showPage('final-quiz')">Zum Gesamtquiz &#8594;</button>
       </div>
     </div>
@@ -2517,12 +2991,13 @@ echo -n "Hallo Welt" | base64
 <script>
 const PAGE_ORDER = [
   'm1-grundlagen','m1-zahlensysteme','m1-quiz',
-  'm2-datei','m2-dateisysteme','m2-quiz',
+  'm2-datei','m2-dateisysteme','m2-journaling','m2-mounting','m2-quiz',
   'm3-kodierung','m3-zeilenenden','m3-quiz',
   'm4-binaer','m4-hex','m4-quiz',
-  'm5-formate','m5-komprimierung','m5-quiz',
+  'm5-formate','m5-komprimierung','m5-deployment','m5-quiz',
   'm6-linux','m6-windows','m6-quiz',
   'm7-mime','m7-base64','m7-quiz',
+  'm8-nfs-smb','m8-quiz',
   'final-quiz'
 ];
 
@@ -2532,6 +3007,8 @@ const BREADCRUMBS = {
   'm1-quiz': 'Modul 1 · Quiz',
   'm2-datei': 'Modul 2 · Dateien & Metadaten',
   'm2-dateisysteme': 'Modul 2 · Dateisysteme',
+  'm2-journaling': 'Modul 2 · Journaling & Fragmentierung',
+  'm2-mounting': 'Modul 2 · Mounting & fstab',
   'm2-quiz': 'Modul 2 · Quiz',
   'm3-kodierung': 'Modul 3 · ASCII & UTF-8',
   'm3-zeilenenden': 'Modul 3 · CR, LF & CRLF',
@@ -2541,6 +3018,7 @@ const BREADCRUMBS = {
   'm4-quiz': 'Modul 4 · Quiz',
   'm5-formate': 'Modul 5 · Dateiformate',
   'm5-komprimierung': 'Modul 5 · Komprimierung',
+  'm5-deployment': 'Modul 5 · Deployment-Formate',
   'm5-quiz': 'Modul 5 · Quiz',
   'm6-linux': 'Modul 6 · Linux Berechtigungen',
   'm6-windows': 'Modul 6 · Windows ACL',
@@ -2548,6 +3026,8 @@ const BREADCRUMBS = {
   'm7-mime': 'Modul 7 · MIME-Types',
   'm7-base64': 'Modul 7 · Base64',
   'm7-quiz': 'Modul 7 · Quiz',
+  'm8-nfs-smb': 'Modul 8 · NFS & SMB',
+  'm8-quiz': 'Modul 8 · Quiz',
   'final-quiz': 'Gesamtquiz'
 };
 
@@ -3064,6 +3544,24 @@ QUIZ_DATA.m6 = {
   ]
 };
 
+QUIZ_DATA.m8 = {
+  correct: ['B','B','C','D','C','B'],
+  feedback: [
+    { correct: "Richtig. SMB (Server Message Block) ist das Standard-Protokoll f\u00fcr Windows-Netzwerkfreigaben. Die Linux-Implementierung davon hei\u00dft Samba.",
+      wrong: "Falsch. NFS ist das Unix/Linux-Protokoll. FTP und HTTP sind keine Dateisystem-Protokolle f\u00fcr Netzwerkfreigaben. SMB ist der Windows-Standard." },
+    { correct: "Richtig. Samba ist die Open-Source-Implementierung des SMB-Protokolls f\u00fcr Linux. Damit kann ein Linux-Server Windows-Clients mit Dateifreigaben bedienen.",
+      wrong: "Falsch. Samba ist kein Dateisystem, kein NFS-Client und kein Backup-Protokoll. Es ist die Linux-Implementierung von SMB f\u00fcr Windows-kompatible Freigaben." },
+    { correct: "Richtig. UNC-Pfade (Universal Naming Convention) verwenden zwei Backslashes vor dem Servernamen: \\\\srv01\\projekte.",
+      wrong: "Falsch. http:// ist kein UNC-Pfad. /srv01/projekte ist ein Linux-Pfad. smb:// wird zwar manchmal in Linux-Dateibrowsern genutzt, ist aber kein Standard-UNC-Pfad f\u00fcr Windows." },
+    { correct: "Richtig. In /etc/fstab wird f\u00fcr SMB-Freigaben der Typ 'cifs' angegeben, da CIFS der \u00e4ltere Name f\u00fcr SMB ist und in Linux weiterhin als Bezeichner verwendet wird.",
+      wrong: "Falsch. 'smb' und 'samba' sind keine g\u00fcltigen fstab-Typen. 'ntfs' ist f\u00fcr lokale Windows-Partitionen. Der korrekte Typ ist 'cifs'." },
+    { correct: "Richtig. NFS ist das native Unix/Linux-Protokoll f\u00fcr Dateifreigaben. In einem reinen Linux-Netzwerk ist NFS die einfachste und performanteste Wahl.",
+      wrong: "Falsch. SMB ist prim\u00e4r f\u00fcr Windows-Netzwerke. FTP und HTTP sind keine Dateisystem-Protokolle die man mounten kann. NFS ist der Linux-Standard." },
+    { correct: "Richtig. _netdev weist das System an, dieses Dateisystem erst zu mounten nachdem das Netzwerk verf\u00fcgbar ist. Ohne diese Option k\u00f6nnte das System beim Booten h\u00e4ngen weil es versucht eine Netzwerkfreigabe zu mounten bevor das Netzwerk bereit ist.",
+      wrong: "Falsch. _netdev hat nichts mit Benutzern, Verschl\u00fcsselung oder Druckern zu tun. Es steuert ausschlie\u00dflich den Zeitpunkt des Mountens: erst nach Netzwerkverf\u00fcgbarkeit." }
+  ]
+};
+
 QUIZ_DATA.m7 = {
   correct: ['B','B','C','B','C','C'],
   feedback: [
@@ -3122,7 +3620,7 @@ window.showQuizResult = function(quizId, total) {
     const moduleMap = {0:'m1',11:'m1',3:'m1',1:'m2',2:'m2',4:'m4',9:'m5',13:'m5',16:'m5',5:'m3',17:'m3',7:'m6',15:'m6',18:'m6',6:'m5',10:'m2',8:'m7',12:'m7',14:'m2',19:'m4'};
     const weakModules = new Set();
     Object.entries(state.answers).forEach(([q,correct]) => { if (!correct && moduleMap[parseInt(q)]) weakModules.add(moduleMap[parseInt(q)]); });
-    const names = {m1:'Modul 1 (Bits & Bytes)',m2:'Modul 2 (Dateien)',m3:'Modul 3 (Textdateien)',m4:'Modul 4 (Binärdateien)',m5:'Modul 5 (Formate)',m6:'Modul 6 (Berechtigungen)',m7:'Modul 7 (MIME & Base64)'};
+    const names = {m1:'Modul 1 (Bits & Bytes)',m2:'Modul 2 (Dateien & Dateisysteme)',m3:'Modul 3 (Textdateien)',m4:'Modul 4 (Binärdateien)',m5:'Modul 5 (Formate)',m6:'Modul 6 (Berechtigungen)',m7:'Modul 7 (MIME & Base64)',m8:'Modul 8 (Netzwerk-Dateisysteme)'};
     const rec = document.getElementById('final-recommendations');
     if (weakModules.size > 0) {
       rec.innerHTML = '<div class="info-box yellow"><div class="box-label">Empfehlung</div><p>Schau nochmal in: ' + Array.from(weakModules).map(m => '<strong>' + names[m] + '</strong>').join(', ') + '.</p></div>';
